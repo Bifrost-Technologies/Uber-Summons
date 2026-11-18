@@ -1,2 +1,14 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+* text=auto eol=lf
+*.lua text eol=lf
+*.toc text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.blp binary
+*.zip binary

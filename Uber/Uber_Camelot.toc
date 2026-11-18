@@ -1,0 +1,20 @@
+## Interface: 16001
+## Title: Uber
+## Notes: Warlock summons and Mage portal requests, setup ETAs and shared locations.
+## Author: Titan
+## Version: 0.4.0-beta.2
+## X-License: MIT
+## SavedVariables: UberDB
+
+Uber.lua
+Orders.lua
+Drivers.lua
+Presence.lua
+Billing.lua
+Administration.lua
+Reservations.lua
+Delivery.lua
+Interface.lua
+Roster.lua
+ServiceUI.lua
+AdminUI.lua
