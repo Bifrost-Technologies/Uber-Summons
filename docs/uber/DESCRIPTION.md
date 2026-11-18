@@ -51,3 +51,13 @@ This beta targets **Forever Interface 16001**. Other game flavors are not claime
 Local SavedVariables hold character names, requests, schedules, notes, provider reviews, prices and receipt/delivery evidence. Logs are bounded; the addon does not read private chat or keystrokes. Do not put sensitive information in notes. Ordinary WoW logout/reload writes SavedVariables; a crash may lose recent changes. Remote reporting is not a guaranteed permanent financial archive.
 
 Free readable Lua under MIT. No real-money payment, paid software unlock, ads or companion executable. Independent community addon; no affiliation with Uber Technologies, Blizzard Entertainment or CurseForge. The fantasy logo is AI-generated branding, not gameplay. Design previews are labeled; real screenshots are separate.
+
+## Network activity and shared sessions
+
+Open **Network & open sessions** in `/uber` for available summoner/portal-keeper counts, occupied drivers, fresh public-user observations and active camp destinations. Join an existing Ready/Setting up camp through the normal booking flow; native invitations, acceptance, payment and delivery still apply. Full reported camps disable joining. The green Connected indicator requires fresh peer traffic; discovery alone is not a successful connection.
+
+The public statistics checkbox excludes your heartbeat from public counts. Its adjacent disclosure explains that your character identity, public/opt-out flag and recent activity still go privately to the fixed creator for admin census. Providers remain listed while offering service, and normal discovery/orders still expose their necessary sender identities to the involved providers. Only the creator can open the private census, including public opt-outs. No hidden-user roster is sent to other clients. Presence stays in memory, expires after 120 seconds and is not a permanent player history. Driver state is fresh for up to 90 seconds.
+
+These are network observations, not exact realm population or a central-server census. Overlapping provider user counts use a conservative maximum rather than being added together. The creator must be online to receive private reports; clients must run the updated addon, and faction/realm/native transport limits still apply. Offline or opt-out clients are not magically discoverable. Heartbeats are paced, fan-out bounded and orders/receipts take priority over background packets.
+
+An approved, service-active warlock who leads a native party requests raid conversion automatically outside combat. WoW permissions/confirmation restrictions remain respected. No automatic conversion back to party, disband, invitation acceptance or bypass is added; the provider handles those decisions.

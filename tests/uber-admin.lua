@@ -26,7 +26,7 @@ local positions={};C_Map={GetBestMapForUnit=function()return (positions[current]
 local sentMail=0;SendMail=function()sentMail=sentMail+1 end
 local function make(name)
  current=name;UberDB={};local first=#frames
- for _,file in ipairs({"Uber","Orders","Drivers","Presence","Billing","Administration","Reservations","Delivery","Interface","Roster","ServiceUI","AdminUI"})do assert(loadfile("Uber/"..file..".lua"))()end
+ for _,file in ipairs({"Uber","Orders","Drivers","Presence","Billing","Administration","Reservations","Delivery","Interface","Roster","ServiceUI","AdminUI","NetworkStats"})do assert(loadfile("Uber/"..file..".lua"))()end
  local u=Uber;u:Init();u:DriverDB();clients[name]=u
  for i=first+1,#frames do if frames[i].events.UNIT_SPELLCAST_SUCCEEDED then u.deliveryEvents=frames[i].scripts.OnEvent end end
  return u
@@ -200,4 +200,31 @@ check(buyer:RateDeliveredOrder('123-456',5),'Corroborated order can be rated');p
 check(lock.db.ratings['123-456'].stars==5,'Rating bound to completed native sender order')
 check(not buyer:RateDeliveredOrder('123-456',1),'No duplicate customer review');check(buyer:RatingSummary('Lock-Realm'):find('5.0',1,true),'Star summary received')
 check(not fresh:RatingSummary('Provider1-Realm'):find('5.0',1,true),'No seeded five-star reviews')
+current='Buyer-Realm';buyer:SetPublicStats(false);pump()
+check(admin.privateNetworkUsers[admin.NameKey('Buyer-Realm')].public==false,'Creator alone receives public-opt-out identity')
+check(not mage.privateNetworkUsers or not mage.privateNetworkUsers[mage.NameKey('Buyer-Realm')],'Hidden census not transmitted to other providers')
+current='Buyer-Realm';check(not buyer:ShowNetworkAdmin(),'Ordinary client cannot open private census');buyer:SetPublicStats(true);pump()
+current=founder;local publicCount=admin:PublicUserCount();admin:Receive('ME7|Realm|1|'..clock,'Buyer-Realm','WHISPER');check(admin:PublicUserCount()==publicCount,'Duplicate public presence counted once')
+admin:Receive('ME7|WrongRealm|0|'..clock,'Fake-Realm','WHISPER');check(not admin.privateNetworkUsers[admin.NameKey('Fake-Realm')],'Other realm private report rejected')
+current='Buyer-Realm';buyer:Receive('ME7|Realm|0|'..clock,'Hidden-Realm','WHISPER');check(not buyer.privateNetworkUsers[buyer.NameKey('Hidden-Realm')],'Non-admin receiver discards hidden data')
+buyer.peers[buyer.NameKey('Mage-Realm')]={online=true,at=clock,state='AVAILABLE'};buyer.peers[buyer.NameKey('Lock-Realm')]={online=true,at=clock,state='SETTING_UP'}
+buyer.db.orders['Lock-Realm']={id='123-99',eta=clock,status='SETTING_UP',destination='Scarlet Monastery',updated=clock};local stats,sessions=buyer:SessionSnapshot()
+check(stats.connected and stats.portals>=1 and stats.occupied>=1,'Fresh provider traffic yields connection and availability counts')
+local session;for _,r in ipairs(sessions)do if r.provider=='Lock-Realm'then session=r end end
+check(session and session.joinable and session.destination=='Scarlet Monastery','Busy setup can expose joinable existing camp')
+buyer.requestAt=0;check(buyer:JoinNetworkSession(session),'Existing session submits a normal join order')
+buyer:Receive('CAP7|123-99|40|40|'..clock,'Lock-Realm','WHISPER');stats,sessions=buyer:SessionSnapshot();for _,r in ipairs(sessions)do if r.provider=='Lock-Realm'then check(r.full and not r.joinable,'Full session disabled without hiding location')end end
+current='Lock-Realm';lock.online=true;lock.db.active={id='123-99',eta=clock,status='READY',riders={},destination='Camp'};local converts=0;IsInGroup=function()return true end;UnitIsGroupLeader=function()return true end;IsInRaid=function()return false end;C_PartyInfo={AllowedToDoPartyConversion=function()return true end,ConvertToRaid=function()converts=converts+1 end};InCombatLockdown=function()return false end
+check(lock:MaybeExpandSummonRaid()and converts==1,'Active leading warlock requests native raid conversion');check(not lock:MaybeExpandSummonRaid()and converts==1,'No repeated conversion spam');clock=clock+16;InCombatLockdown=function()return true end;check(not lock:MaybeExpandSummonRaid(),'Combat postpones conversion');InCombatLockdown=function()return false end;UnitIsGroupLeader=function()return false end;check(not lock:MaybeExpandSummonRaid(),'Non-leader never converts group')
+current='Buyer-Realm';buyer:Show();buyer:ShowNetwork();check(buyer.networkFrame:IsShown()and buyer.networkStatus:GetText()~='','Network UI renders');current=founder;admin:Show();admin:ShowAdmin();check(admin:ShowNetworkAdmin()and admin.censusFrame:IsShown(),'Creator census accessible from admin panel')
+clock=clock+121;current=founder;admin:Tick();check(not admin.privateNetworkUsers[admin.NameKey('Buyer-Realm')],'Expired private presence removed')
+current='Buyer-Realm';check(not buyer:JoinNetworkSession(session),'Capacity is rechecked before submitting a stale row join')
+buyer.queue={};for i=1,100 do buyer:Send({'ME7','Realm','1',tostring(clock)},founder)end
+check(buyer:Send({'R','123-88','-','Camp'},'Mage-Realm')and #buyer.queue==100 and buyer.queue[1].text:match('^R|'),'Order evicts a background packet and bypasses census backlog')
+check(buyer:Send({'D','123-88','party','1'},'Mage-Realm')and buyer.queue[2].text:match('^D|'),'Urgent protocol packet order remains FIFO')
+current='Lock-Realm';lock.online=true;lock.db.active={id='123-777',eta=clock,status='SETTING_UP',destination='Camp',riders={}};check(lock:SetStatus('READY',0)and lock.db.active.sharedSession,'Ready camp stays open for successive groups until manually closed')
+check(lock:SetStatus('COMPLETE',0)and lock.db.active.status=='COMPLETE','Provider can still manually close shared camp')
+current='Lock-Realm';lock.db.active={id='123-778',eta=clock,status='READY',destination='Camp',riders={['Buyer-Realm']=true},sharedSession=true};lock.db.inbox['Buyer-Realm:777-1']={sender='Buyer-Realm',request='777-1',join='123-778',camp='123-778',status='Joined'}
+buyer.db.outbox['777-1']={provider='Lock-Realm',status='READY',join='123-778'};positions['Buyer-Realm']={2,.5,.5};lock:Publish('Buyer-Realm');check(lock:ObserveServiceCast(698,'shared-delivery'),'Shared camp records an actual summon cast');pump();current='Buyer-Realm';buyer:ObserveSummonOffer();positions[current]={1,.2,.4};check(buyer:ObserveTravel(false,false),'Shared camp customer reports corroborating travel');pump()
+check(lock.db.active.status=='READY'and lock.db.active.delivered['Buyer-Realm']and not lock.db.active.riders['Buyer-Realm'],'Delivered rider frees session enrollment while camp remains open')
 print("PASS: "..passed.." Uber administration and delivery assertions")

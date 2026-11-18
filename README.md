@@ -57,4 +57,4 @@ Only Lua, required .toc manifests, Markdown, licenses, source build/verification
 
 ## Current release
 
-Uber 0.4.0-beta.2 adds star-only feedback for corroborated completed orders and gold names for native-confirmed Tranquility providers. Reviews are never pre-populated; provider-reported summaries are labeled. The separate Tranquility toolkit provides its own membership vault and guild work board. Run `./scripts/check-public-source.ps1 -Repository .` to check source-only tracking and credential signatures. `./Build.ps1` validates and packages this addon without changing game folders or publishing.
+Uber 0.5.0-beta.1 adds star-only feedback for corroborated completed orders and gold names for native-confirmed Tranquility providers. Reviews are never pre-populated; provider-reported summaries are labeled. The separate Tranquility toolkit provides its own membership vault and guild work board. Run `./scripts/check-public-source.ps1 -Repository .` to check source-only tracking and credential signatures. `./Build.ps1` validates and packages this addon without changing game folders or publishing.

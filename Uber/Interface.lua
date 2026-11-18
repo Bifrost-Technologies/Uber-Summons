@@ -50,7 +50,7 @@ function U:Show()
             local view=CreateFrame("Frame",nil,f);view:SetPoint("TOPLEFT",24,-120);view:SetSize(892,520);self.views[key]=view
         end
         self.footer=label(f,"",28,-654,880,30)
-        button(f,"Guild LFG",760,-20,110,function()
+        button(f,"Guild LFG",760,-14,110,function()
             if _G.TranquilityLFG then _G.TranquilityLFG:Show()else self:Notice("Enable TranquilityLFG to open your guild's private group finder.")end
         end)
         local v=self.views["Book a summon"]

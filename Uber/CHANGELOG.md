@@ -1,3 +1,10 @@
+# 0.5.0-beta.1
+
+- Added observed network user counts, creator-only private presence census, public-stat opt-out and explicit privacy disclosure.
+- Added real-traffic connection indicator, available/occupied provider counts, destination/session browser and normal camp join requests with full-session checks.
+- Added native raid-conversion attempts for an active warlock leading a party; combat, native permissions and confirmations remain respected. Party conversion/disband stays manual.
+- Prioritized order/receipt packets over bounded background discovery/statistics and expired stale observations.
+
 # 0.4.0-beta.2
 
 - Added one star-only rating per corroborated completed order, without comments or seeded reviews.

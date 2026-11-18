@@ -129,7 +129,7 @@ function U:Receive(text,sender,channel)
   for rider in pairs(a.riders)do if not a.delivered[rider]then all=false end end
   -- Party members without their own order cannot be inferred from one customer's jump.
   for _,r in pairs(self.db.inbox)do if (r.camp==a.id or r.join==a.id)and r.details and (r.details.party or 1)>1 then all=false end end
-  if all then self:SetStatus("COMPLETE",0)end
+  if all and not a.sharedSession then self:SetStatus("COMPLETE",0)end
   self:Refresh();return
  elseif p[1]=="DELIVERED4"then
   local r=self.db.outbox[p[2]];local at=integer(p[4],9999999999)

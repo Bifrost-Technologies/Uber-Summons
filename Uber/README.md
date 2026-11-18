@@ -30,3 +30,13 @@ Native addon packets do not open chat, paste text or intercept movement/typing. 
 ## Release checks
 
 0.4.0-beta.1 is a beta candidate. Automated simulation is supplemented by required live mailbox, multiplayer, party/cast/arrival and UI checks. The commission model still requires platform-policy clarification. No claim of public acceptance, complete spell coverage, server-certified delivery or permanent global creator ownership is made. The addon is independent of Uber Technologies, Blizzard and CurseForge.
+
+## Network activity and shared sessions
+
+Open **Network & open sessions** in `/uber` for available summoner/portal-keeper counts, occupied drivers, fresh public-user observations and active camp destinations. Join an existing Ready/Setting up camp through the normal booking flow; native invitations, acceptance, payment and delivery still apply. Full reported camps disable joining. The green Connected indicator requires fresh peer traffic; discovery alone is not a successful connection.
+
+The public statistics checkbox excludes your heartbeat from public counts. Its adjacent disclosure explains that your character identity, public/opt-out flag and recent activity still go privately to the fixed creator for admin census. Providers remain listed while offering service, and normal discovery/orders still expose their necessary sender identities to the involved providers. Only the creator can open the private census, including public opt-outs. No hidden-user roster is sent to other clients. Presence stays in memory, expires after 120 seconds and is not a permanent player history. Driver state is fresh for up to 90 seconds.
+
+These are network observations, not exact realm population or a central-server census. Overlapping provider user counts use a conservative maximum rather than being added together. The creator must be online to receive private reports; clients must run the updated addon, and faction/realm/native transport limits still apply. Offline or opt-out clients are not magically discoverable. Heartbeats are paced, fan-out bounded and orders/receipts take priority over background packets.
+
+An approved, service-active warlock who leads a native party requests raid conversion automatically outside combat. WoW permissions/confirmation restrictions remain respected. No automatic conversion back to party, disband, invitation acceptance or bypass is added; the provider handles those decisions.

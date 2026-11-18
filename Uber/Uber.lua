@@ -40,7 +40,7 @@ function U:Tick()
             local ok,result=pcall(send,self.prefix,p.text,p.channel,p.target)
             if not ok or result==false or type(result)=="number" and result~=0 then
                 -- Offline discovery peers are normal; do not turn them into visible chat spam.
-                if not p.text:match("^HELLO3|")and p.text~="ADMINPING4"and p.text~="ROSTER"then tell("Delivery failed; refresh/retry when the recipient is online.")end
+                if not p.text:match("^HELLO3|")and p.text~="ADMINPING4"and p.text~="ROSTER"and not p.text:match("^ME7|")and not p.text:match("^ACK7|")and p.text~="LEAVE7"then tell("Delivery failed; refresh/retry when the recipient is online.")end
             end
         end
     end
