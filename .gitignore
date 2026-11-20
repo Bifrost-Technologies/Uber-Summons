@@ -82,3 +82,7 @@ SavedVariables/
 /github-ready/
 /curseforge/discord-posts/
 /guild/README-DISCORD.md
+# Public release automation and runtime icon assets
+!/.github/workflows/release.yml
+!/Uber/.pkgmeta
+!/Uber/UberIcon.tga

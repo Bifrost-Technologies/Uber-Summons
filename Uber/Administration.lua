@@ -32,9 +32,19 @@ function U:ProviderLive(who)
  if same(who,me())then return self.online==true end
  local p=self.peers and self.peers[key(who)];return p and p.online and now()-p.at<=90 or false
 end
+function U:ProviderPresence(who)
+ if same(who,me())then return true,self.online==true,self.online and "Service open"or "Online · bookings closed"end
+ local p=self.peers and self.peers[key(who)]
+ if p and now()-p.at<=90 then return p.online==true,p.online==true,p.online and (self.statusLabels[p.state]or "Service open")or "Recently seen · bookings closed"end
+ return false,false,"Offline / no recent presence"
+end
 function U:ProviderDirectory()
- self:DriverDB();local names={}
- for _,r in pairs(self.db.drivers)do if self:Approved(r.name)then names[#names+1]=r.name end end
+ self:DriverDB();local names,seen={},{}
+ local mine=me()
+ for _,r in pairs(self.db.drivers)do if type(r.name)=="string"and self:Approved(r.name)then
+  local id=key(r.name)
+  if not seen[id]then seen[id]=true;names[#names+1]=same(r.name,mine)and mine or r.name end
+ end end
  table.sort(names,function(a,b)if a==b then return false end;if same(a,self.FOUNDER)then return true elseif same(b,self.FOUNDER)then return false end;return a<b end)
  return names
 end

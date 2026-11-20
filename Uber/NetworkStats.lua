@@ -185,14 +185,17 @@ function U:Show()
  show(self);if not self.frame then return end
  if not self.networkEntry then
   self.networkStatus=label(self.frame,'Checking summoning network…',180,-48,475,20)
-  self.networkEntry=button(self.frame,'Network & open sessions',674,-45,196,function()self:ShowNetwork()end)
+  self.networkEntry=button(self.frame,'Network & open sessions',674,-42,196,function()self:ShowNetwork()end)
  end;self:Refresh()
 end
 local refresh=U.Refresh
 function U:Refresh()
  refresh(self);if not self.db then return end;local stats,sessions=self:SessionSnapshot()
- if self.networkStatus then self.networkStatus:SetText(stats.connected and '|cff55dd88● Connected to summoning network|r'or '|cffffcc66● Discovering summoning network|r')end
+ if self.networkStatus then self.networkStatus:SetText(stats.connected and '|cff55dd88Connected to summoning network|r'or '|cffffcc66Discovering summoning network|r')end
  if self.availability then self.availability:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied · '..stats.users..' public users observed\n'..(stats.providers>0 and stats.summoners+stats.portals==0 and 'All observed providers are occupied. Check open sessions to join an existing camp.'or(stats.providers==0 and 'No active providers observed. Refresh or check again later.'or 'Network & open sessions shows destinations and shared camps.')))end
+ if self.availability and not self.online and self:Approved(GetUnitName('player',true))then
+  self.availability:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied\nYou are ONLINE · Bookings closed. Open Driver desk to accept requests; advance reservations remain available.')
+ end
  if self.networkFrame and self.networkFrame:IsShown()then
   self.networkSummary:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied\n'..stats.users..' public active users observed · '..#sessions..' active camps');self.networkAdminButton:SetEnabled(self:IsDispatcher())
   self.sessionPage=math.max(1,math.min(self.sessionPage or 1,math.max(1,math.ceil(#sessions/5))))

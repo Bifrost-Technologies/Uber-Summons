@@ -63,10 +63,10 @@ function U:DiscoverDrivers(force)
  return true
 end
 function U:ActiveDrivers()
- self:Network();local list={}
+ self:Network();local list,seen={},{};local mine=GetUnitName("player",true)
  for _,r in pairs(self.db.drivers or {})do
   local p=self.peers[key(r.name)]
-  if self:Approved(r.name)and p and p.online and now()-p.at<=90 then list[#list+1]=r.name end
+  if key(r.name)~=key(mine)and not seen[key(r.name)]and self:Approved(r.name)and p and p.online and now()-p.at<=90 then seen[key(r.name)]=true;list[#list+1]=r.name end
  end
  if self.online and self:Approved(GetUnitName("player",true))then
   local mine=GetUnitName("player",true);local exists=false;for _,n in ipairs(list)do if key(n)==key(mine)then exists=true end end

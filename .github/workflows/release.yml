@@ -1,0 +1,50 @@
+name: Package and release Uber
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Package installable addon (no tests)
+        run: |
+          mkdir -p dist
+          cd Uber
+          version=$(sed -n 's/^## Version: //p' Uber.toc | tr -d '\r')
+          cd ..
+          zip -r "dist/Uber-$version.zip" Uber -x 'Uber/.pkgmeta'
+          sha256sum "dist/Uber-$version.zip" > "dist/Uber-$version.zip.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Uber-install-package
+          path: dist/Uber-*
+  curseforge:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require CurseForge configuration and matching version
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_PROJECT_ID: ${{ vars.CF_PROJECT_ID }}
+        run: |
+          test -n "$CF_API_TOKEN" || { echo 'Set repository secret CF_API_TOKEN'; exit 1; }
+          [[ "$CF_PROJECT_ID" =~ ^[1-9][0-9]*$ ]] || { echo 'Set repository variable CF_PROJECT_ID'; exit 1; }
+          version=$(sed -n 's/^## Version: //p' Uber/Uber.toc | tr -d '\r')
+          test "$GITHUB_REF_NAME" = "v$version" || { echo 'Tag must match TOC version'; exit 1; }
+      - uses: BigWigsMods/packager@v2
+        with:
+          args: -t Uber -p ${{ vars.CF_PROJECT_ID }}
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}

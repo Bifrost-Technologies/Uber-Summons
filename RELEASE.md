@@ -1,13 +1,17 @@
-# Uber release how-to
+# Uber Summons 0.5.0-beta.8 release
 
-Current prepared source: **0.4.0-beta.1**. Keep Beta until the relevant live-client checks and review work are complete.
+ZIP: WoW-Addons/dist/Public-Release-Ready/Uber-0.5.0-beta.8.zip. Tests skipped at owner request; no live validation or publication performed.
 
-1. Update both `Uber/Uber.toc` and `Uber/Uber_Camelot.toc` together when the version changes. Preserve the supported Interface declaration; do not add untested flavors to pass an upload form.
-2. Update `Uber/CHANGELOG.md`, the root changelog and player/submission documentation. Preserve MIT notices and distinguish observed receipts, reported payments and client delivery evidence.
-3. Run `Build.ps1`. A successful build requires final PASS markers, all four Lua suites, public source scope, manifest checks, raw ZIP header/CRC/decompression checks and per-file hashes.
-4. Record affected live checks from `docs/uber/TESTING.md`, including actual spell/map coverage, native mail, party arrival, moderation and UI. Supply real screenshots separately.
-5. In GitHub Desktop, review/commit the source changes and push your chosen branch. Generated output stays ignored.
-6. Create a release for the reviewed commit/tag. Attach `dist/Uber-<version>.zip` and its SHA-256 sidecar as release assets. The install ZIP has a single `Uber/` root; GitHub's automatic source archive has a different purpose.
-7. Use the prepared listing and form text under `share/Uber-submission/release-<version>/` to update the existing CurseForge project. Upload the addon ZIP alone, not the entire author folder. Keep approval/version statements accurate.
+Missing locally: .github/workflows and .pkgmeta. Old RELEASE.md described manual uploads. Workflow now prepared: every branch push packages the public Uber folder as an Actions artifact; version tags additionally upload to CurseForge after configuration.
 
-Build outputs and metadata are local until you upload them. Neither a successful build nor GitHub publication submits the file to CurseForge. Service-commission policy review and real-client validation remain separate from ZIP verification.
+Required GitHub setup in BifrostTitan/Uber-Summons:
+1. Review/commit/push this source and workflow.
+2. Settings > Secrets and variables > Actions: add secret CF_API_TOKEN from your CurseForge author account. Never paste the token into source or chat.
+3. Add repository variable CF_PROJECT_ID with the actual numeric Uber Summons project ID.
+4. Push annotated tag v0.5.0-beta.8 matching the TOC version. Beta tag retains beta classification. Missing credentials cause an explicit workflow failure.
+
+The alternative native CurseForge packager requires a repository webhook; no GitHub workflow is required for that system. Confirm the connected repository, branch/addon-root and whether all commits or only tags are packaged. Native all-commit builds are alpha. Configure only one upload route to avoid duplicates. Official instructions: https://support.curseforge.com/support/solutions/articles/9000197281
+
+Remote hooks/settings/secrets were not accessible for verification here. No push, tag or upload was performed. Original source was backed up under dist/Archive before the Git checkout update. The install ZIP has Uber as its sole root; never upload the whole author repository or private helpers.
+
+Features: realm/faction booking gates, realm filtering, summon-click helper requests, phase keeper invitation popups and rolling host budget, and default-open driver service with optional remembered ON/OFF after restart. Layer labels remain manual/unverified; invitations do not prove phase transfer. Phase hosting remains opt-in independently of default-open driver availability.

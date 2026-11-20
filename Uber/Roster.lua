@@ -38,15 +38,16 @@ function U:Show()
         local title=f:CreateFontString(nil,"OVERLAY","GameFontNormalLarge");title:SetPoint("TOPLEFT",12,-4);title:SetText("Meet your approved summons & portal drivers")
         local tip=f:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");tip:SetPoint("TOPLEFT",12,-44);tip:SetSize(860,35);tip:SetJustifyH("LEFT");tip:SetText("Choose Order Uber, or right-click a driver for summons, friends and guild requests. Class icon shown when a live portrait is unavailable.")
         self.availability=tip
+        local helpers=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');helpers:SetPoint('TOPRIGHT',-12,-54);helpers:SetSize(180,26);helpers:SetText('Find summon click helpers');helpers:SetScript('OnClick',function()SummonClickHelpers:Show()end)
         self.rosterRows={}
         for i=1,4 do
             local row=CreateFrame("Button",nil,f,"BackdropTemplate");self.rosterRows[i]=row
-            row:SetPoint("TOPLEFT",12,-94-(i-1)*88);row:SetSize(866,78);row:RegisterForClicks("LeftButtonUp","RightButtonUp")
+            row:SetPoint("TOPLEFT",12,-94-(i-1)*92);row:SetSize(866,88);row:RegisterForClicks("LeftButtonUp","RightButtonUp")
             row:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=10});row:SetBackdropColor(.055,.075,.11,1)
             row.icon=row:CreateTexture(nil,"ARTWORK");row.icon:SetPoint("TOPLEFT",12,-11);row.icon:SetSize(54,54)
             row.title=row:CreateFontString(nil,"OVERLAY","GameFontNormalLarge");row.title:SetPoint("TOPLEFT",84,-14);row.title:SetSize(510,24);row.title:SetJustifyH("LEFT")
-            row.info=row:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");row.info:SetPoint("TOPLEFT",84,-36);row.info:SetSize(510,36);row.info:SetJustifyH("LEFT")
-            local order=CreateFrame("Button",nil,row,"UIPanelButtonTemplate");order:SetPoint("TOPRIGHT",-48,-22);order:SetSize(170,32);order:SetText("Order Uber")
+            row.info=row:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");row.info:SetPoint("TOPLEFT",84,-36);row.info:SetSize(510,46);row.info:SetJustifyH("LEFT")
+            local order=CreateFrame("Button",nil,row,"UIPanelButtonTemplate");row.order=order;order:SetPoint("TOPRIGHT",-48,-22);order:SetSize(170,32);order:SetText("Order Uber")
             order:SetScript("OnClick",function()if row.driver then self:SelectDriver(row.driver)end end)
             local tools=CreateFrame("Button",nil,row,"UIPanelButtonTemplate");tools:SetPoint("TOPRIGHT",-10,-22);tools:SetSize(30,32);tools:SetText("...")
             tools:SetScript("OnClick",function()if row.driver then self:DriverMenu(row.driver,row)end end)
@@ -64,7 +65,7 @@ function U:Refresh()
     refresh(self)
     if not self.rosterRows or not self.frame:IsShown()then return end
     local list={}
-    if self.ProviderDirectory then list=self:ProviderDirectory();self.availability:SetText("LIVE = service open. Gray = offline: reserve ahead; delivery and provider acceptance are required. Founder: "..self.FOUNDER)
+    if self.ProviderDirectory then list=self:ProviderDirectory();self.availability:SetText("Online presence and booking availability are separate. Unavailable providers accept advance reservations only. Creator: "..self.FOUNDER)
     elseif self.ActiveDrivers then list=self:ActiveDrivers();self.availability:SetText(self:AvailabilityMessage())
     else for _,r in pairs(self.db.drivers)do if self:Approved(r.name)then list[#list+1]=r.name end end;table.sort(list)end
     self.rosterPage=math.min(self.rosterPage or 1,math.max(1,math.ceil(#list/4)))
@@ -77,12 +78,16 @@ function U:Refresh()
             row.info:SetText((mage and "Mage · Portals | "or "Warlock · Summons | ")..(peer and ("From "..self:Money(peer.standard).." | priority +"..self:Money(peer.priority))or o and self:IsFresh(o)and (self.statusLabels[o.status]or o.status)or "Availability not confirmed"))
             row.icon:SetTexture(mage and "Interface\\Icons\\ClassIcon_Mage"or "Interface\\Icons\\ClassIcon_Warlock");row.icon:SetTexCoord(0,1,0,1)
             if self.ProviderLive then
-                local live=self:ProviderLive(who);local policy=self:ProviderPolicy(who)
-                row.title:SetText((live and "|cff59dbc0[LIVE]|r "or "|cff999999[OFFLINE]|r ")..(self:NativeTranquilityMember(who)and "|cffffd166"..who.."|r · Tranquility"or who)..(self.NameKey(who)==self.NameKey(self.FOUNDER)and "  · Creator"or ""))
-                row:SetAlpha(live and 1 or .6)
+                local live,available,presence=self:ProviderPresence(who);local policy=self:ProviderPolicy(who)
+                if row.order then row.order:SetText(available and "Order Uber"or "Reserve ahead")end
+                row.title:SetText((live and "|cff59dbc0[ONLINE]|r "or "|cff999999[UNAVAILABLE]|r ")..(self:NativeTranquilityMember(who)and "|cffffd166"..who.."|r · Tranquility"or who)..(self.NameKey(who)==self.NameKey(self.FOUNDER)and "  · Creator"or ""))
+                row:SetAlpha(live and 1 or .72)
+                row:SetBackdropColor(live and .045 or .035,live and .12 or .045,live and .13 or .06,1)
                 local base=policy.standard and policy.standard+self:PortalCost(who)or peer and peer.standard
                 local price=base and ("From "..self:Money(base).." · Priority +"..self:Money(policy.priority or peer and peer.priority or 0))or "Quote required"
-                row.info:SetText((mage and "Mage portals"or "Warlock summons").." · "..price.."\n"..policy.hours.." · "..self:RatingSummary(who))
+                local hours=type(policy.hours)=="string"and policy.hours or "Hours not published"
+                if #hours>46 then hours=hours:sub(1,43).."..."end
+                row.info:SetText((mage and "Mage portals"or "Warlock summons").." · "..price.."\n"..presence.." · "..hours.."\n"..self:RatingSummary(who))
             end
             -- Unit tokens are only available for self / party / raid; never invent remote portrait data.
             if SetPortraitTexture and GetUnitName then

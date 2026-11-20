@@ -24,6 +24,7 @@ end
 function U:Notice(text)self.notice=text;self:Refresh()end
 function U:Tab(tab)
     if self.menu then self.menu:Hide()end
+    if self.PlayFeedback and self.tab~=tab then self:PlayFeedback("tab")end
     self.tab=tab
     for name,view in pairs(self.views)do view:SetShown(name==tab)end
     for name,b in pairs(self.tabs)do b:SetEnabled(name~=tab)end
@@ -42,7 +43,7 @@ function U:Show()
         f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(unpack(colors.bg))
         f:EnableMouse(true);f:SetMovable(true);f:RegisterForDrag("LeftButton");f:SetScript("OnDragStart",f.StartMoving);f:SetScript("OnDragStop",f.StopMovingOrSizing)
         label(f,"UBER",28,-22,180,32,true):SetTextColor(unpack(colors.accent))
-        label(f,"Summons, portals and your next adventure.",180,-27,550)
+        label(f,"Summons, portals and your next adventure.",180,-27,345)
         button(f,"X",880,-18,34,function()f:Hide()end)
         self.views={};self.tabs={}
         for i,title in ipairs({"Drivers","Book a summon","Track & map","Driver desk","Recruitment"})do
@@ -50,9 +51,6 @@ function U:Show()
             local view=CreateFrame("Frame",nil,f);view:SetPoint("TOPLEFT",24,-120);view:SetSize(892,520);self.views[key]=view
         end
         self.footer=label(f,"",28,-654,880,30)
-        button(f,"Guild LFG",760,-14,110,function()
-            if _G.TranquilityLFG then _G.TranquilityLFG:Show()else self:Notice("Enable TranquilityLFG to open your guild's private group finder.")end
-        end)
         local v=self.views["Book a summon"]
         label(v,"Where are we setting up?",12,-4,700,34,true)
         label(v,"Driver character-realm",12,-48,250);self.provider=edit(v,self.db.provider,260,-44,390)

@@ -1,3 +1,25 @@
+# 0.5.0-beta.4 — 2026-11-18
+
+- Removed the Guild LFG launcher from the standalone Uber interface.
+
+# 0.5.0-beta.3 — 2026-11-18
+
+- Deduplicated provider directory and available-driver counts by character identity.
+- Local logged-in providers show ONLINE even when bookings are closed; service availability remains explicit and is never automatically enabled.
+- Removed stale self-heartbeat availability after closing service.
+- Separated Mailbox and Guild LFG header controls and constrained the header tagline.
+- Improved roster card spacing, status/price/hour/rating lines and availability-dependent Order Uber / Reserve ahead buttons.
+- Added muted-by-preference UI sounds for opening Uber/mailbox, switching tabs and reading notifications, with a cooldown.
+
+# 0.5.0-beta.2 — 2026-11-18
+
+- Added the Uber logo to the in-game addon list and a draggable minimap launcher.
+- Left-click opens/closes Uber; right-click opens the notification mailbox.
+- Added a persistent 100-item mailbox with unread badge, read/total counts, individual and bulk read actions, and clearing of read items.
+- Added optional notification sound and popup notices, with duplicate-event suppression and a sound cooldown.
+- Notifications follow validated order/receipt changes and selected reservation, application, mail-observation and delivery events. They are local in-game notices, not external push or native mail delivery.
+- Recovered the original logo for the game-compatible TGA and repaired the 400×400 submission PNG.
+
 # 0.5.0-beta.1
 
 - Added observed network user counts, creator-only private presence census, public-stat opt-out and explicit privacy disclosure.
@@ -83,3 +105,7 @@
 
 - Introduced standalone summons requests, a saved inbox, active camps and customer joins.
 - Added integration entry points for the guild addons.
+
+## 0.5.0-beta.8
+
+Realm/faction gates, realm filtering, summon-click helper requests, phase keepers with invitation budgets, and remembered driver service preferences. Tests skipped; no live validation. Layer labels remain unverified.
