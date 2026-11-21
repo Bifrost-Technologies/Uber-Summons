@@ -1,3 +1,13 @@
+## 0.5.0-beta.10
+
+Current realm/faction directory, service availability and layer-keeper request source packaged. Preserve documented limitations on town precision, layer identity and cooldown estimates.
+
+Private executables/automation excluded. Packaging-only review; no new gameplay or test suites. Client: Forever WoW 1.60.1 / Interface 16001.
+
+## 0.5.0-beta.9
+
+Realm/faction metadata expires after 90 seconds. Region helper outreach accepts town-area rows only after observing the prepared native WHO query; otherwise exact-area fallback is explicit. Source/syntax review only; no behavioral/live tests run.
+
 # 0.5.0-beta.4 — 2026-11-18
 
 - Removed the Guild LFG launcher from the standalone Uber interface.
@@ -105,7 +115,3 @@
 
 - Introduced standalone summons requests, a saved inbox, active camps and customer joins.
 - Added integration entry points for the guild addons.
-
-## 0.5.0-beta.8
-
-Realm/faction gates, realm filtering, summon-click helper requests, phase keepers with invitation budgets, and remembered driver service preferences. Tests skipped; no live validation. Layer labels remain unverified.

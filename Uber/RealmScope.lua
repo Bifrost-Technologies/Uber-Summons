@@ -3,12 +3,12 @@ local function realm()return GetNormalizedRealmName and GetNormalizedRealmName()
 local function normalize(s)return tostring(s or ''):lower():gsub('%s','')end
 function U:DriverScope(who)
  self.db.driverScopes=self.db.driverScopes or {}
- if self.NameKey(who)==self.NameKey(GetUnitName('player',true))then return {realm=realm(),faction=UnitFactionGroup('player')}end
+ if self.NameKey(who)==self.NameKey(GetUnitName('player',true))then return {realm=realm(),faction=UnitFactionGroup('player'),at=GetServerTime()}end
  return self.db.driverScopes[self.NameKey(who)]
 end
 function U:CanBookDriver(who)
  local s=self:DriverScope(who)
- return s and normalize(s.realm)==normalize(realm())and s.faction==UnitFactionGroup('player')
+ return s and type(s.at)=='number'and GetServerTime()-s.at>=0 and GetServerTime()-s.at<=90 and normalize(s.realm)==normalize(realm())and s.faction==UnitFactionGroup('player')
 end
 local request=U.Request
 function U:Request(...)if not self:CanBookDriver(self.db.provider)then self:Notice('Booking unavailable: different or unconfirmed realm/faction.');return false end;return request(self,...)end
@@ -26,7 +26,7 @@ function U:Receive(text,sender,channel)
  if type(text)=='string'and text:sub(1,7)=='SCOPE1|'then
   local r,f=text:match('^SCOPE1|([^|]+)|([^|]+)$')
   if r and #r<=80 and not r:find('[%c]')and(f=='Alliance'or f=='Horde')and self:Approved(sender)then
-   self.db.driverScopes=self.db.driverScopes or {};self.db.driverScopes[self.NameKey(sender)]={realm=r,faction=f};self:Refresh()
+   self.db.driverScopes=self.db.driverScopes or {};self.db.driverScopes[self.NameKey(sender)]={realm=r,faction=f,at=GetServerTime()};self:Refresh()
   end
   return
  end

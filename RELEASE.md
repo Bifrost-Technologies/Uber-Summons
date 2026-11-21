@@ -1,17 +1,62 @@
-# Uber Summons 0.5.0-beta.8 release
+# Uber Summons — release form
 
-ZIP: WoW-Addons/dist/Public-Release-Ready/Uber-0.5.0-beta.8.zip. Tests skipped at owner request; no live validation or publication performed.
+Prepared November 20, 2026. Current package **0.5.0-beta.10**. Files are prepared locally; no submission, approval, remote workflow run or live-client certification is claimed.
 
-Missing locally: .github/workflows and .pkgmeta. Old RELEASE.md described manual uploads. Workflow now prepared: every branch push packages the public Uber folder as an Actions artifact; version tags additionally upload to CurseForge after configuration.
+## Project fields
 
-Required GitHub setup in BifrostTitan/Uber-Summons:
-1. Review/commit/push this source and workflow.
-2. Settings > Secrets and variables > Actions: add secret CF_API_TOKEN from your CurseForge author account. Never paste the token into source or chat.
-3. Add repository variable CF_PROJECT_ID with the actual numeric Uber Summons project ID.
-4. Push annotated tag v0.5.0-beta.8 matching the TOC version. Beta tag retains beta classification. Missing credentials cause an explicit workflow failure.
+| Field | Value |
+| --- | --- |
+| Game | World of Warcraft |
+| Project name | Uber Summons |
+| Proposed slug | uber (use the existing project's slug when updating) |
+| Summary | Coordinate player-run summons, portals and layer-keeper requests with availability controls. |
+| Class | Addons |
+| Main / additional categories | Chat & Communication; Travel; Map & Minimap — select matching labels available in the form |
+| License | MIT, matching bundled source LICENSE notices; retain third-party asset notices |
+| Logo/avatar | Uber-avatar.png (existing project artwork; retain author ownership confirmation). |
+| Allow comments | Enabled |
+| Listing visibility | Public; do not enable experimental/unlisted unless deliberately desired |
+| Description format | Markdown; paste the description below |
+| Author / members | Your actual CurseForge publishing account and actual contributors |
+| Project ID | Use this addon's assigned numeric CurseForge ID; not available from local source |
+| Source URL | https://github.com/BifrostTitan/Uber-Summons |
+| Issues / wiki | Use actual published URLs; otherwise leave blank and use CurseForge comments |
+| Donation / social links | Optional; leave blank unless you supply real links |
+| Screenshots | Add real addon screenshots; no new screenshots are included in this handoff |
 
-The alternative native CurseForge packager requires a repository webhook; no GitHub workflow is required for that system. Confirm the connected repository, branch/addon-root and whether all commits or only tags are packaged. Native all-commit builds are alpha. Configure only one upload route to avoid duplicates. Official instructions: https://support.curseforge.com/support/solutions/articles/9000197281
+## Description — copy/paste
 
-Remote hooks/settings/secrets were not accessible for verification here. No push, tag or upload was performed. Original source was backed up under dist/Archive before the Git checkout update. The install ZIP has Uber as its sole root; never upload the whole author repository or private helpers.
+Offer or request Warlock summoning, Mage portal and layer-keeper services through a shared directory. Realm/faction compatibility controls requests; native party invites, spell requirements and game restrictions remain authoritative. Driver availability defaults to open unless a saved restart preference explicitly keeps service closed. Layer service pauses during its tracked cooldown and resumes when eligible; reported layers and tracked swap estimates are not a guaranteed server layer or exact server limit. Summon helpers can prepare editable requests for nearby players; exact-town WHO results are used only when the client actually reports that town. Public presence/session counts and provider listings depend on fresh addon messages. The addon uses in-game communications; read the bundled README for identity/admin-presence disclosure. No C++ helper or game movement automation is included.
 
-Features: realm/faction booking gates, realm filtering, summon-click helper requests, phase keeper invitation popups and rolling host budget, and default-open driver service with optional remembered ON/OFF after restart. Layer labels remain manual/unverified; invitations do not prove phase transfer. Phase hosting remains opt-in independently of default-open driver availability.
+Built for **Forever WoW 1.60.1 / Interface 16001**. Open `/uber`. Other Retail/Classic clients are not certified by this release. Native game restrictions and unavailable APIs still apply.
+
+## File upload fields
+
+| Field | Value |
+| --- | --- |
+| Upload file | `Uber-0.5.0-beta.10.zip` — upload this ZIP alone |
+| Display name | Uber Summons 0.5.0-beta.10 |
+| Release type | Beta |
+| Release options | Release after moderation approval, or choose manual scheduling in your account |
+| Supported client / version | Forever WoW 1.60.1, Interface 16001. Select its actual supported entry if offered; do not relabel it as another client. Confirm with CurseForge support if this client is not listed. |
+| Related projects | None. |
+| SHA-256 | `46efb14eed24f28dc803ad4885e38ae2ba287d995d84a32712488ca28294c47a` |
+| ZIP root addon folders (1) | `Uber` |
+
+### Changelog — copy/paste
+
+Current realm/faction directory, service availability and layer-keeper request source packaged. Preserve documented limitations on town precision, layer identity and cooldown estimates.
+
+Packaging verified direct addon-root layout, manifest-declared files, matching generic/Camelot manifests, ZIP decompression/CRC and SHA-256. No gameplay or test suites were run for this packaging pass. Runtime limits are described above and in bundled READMEs.
+
+## GitHub commit packaging
+
+The repository's `.github/workflows/release.yml` builds an artifact on pushes. In GitHub Settings → Secrets and variables → Actions, set secret `CF_API_TOKEN`, variable `CF_PROJECT_ID`, and variable `CF_GAME_VERSION_IDS` with real supported numeric version IDs. No account tokens are stored in this document. Default-branch commits upload Alpha files when configured; a tag `v0.5.0-beta.10` uploads this Beta version. Generated ZIPs remain local build artifacts; commit source/configuration instead. Do not use duplicate CurseForge webhooks and Actions upload for the same commit.
+
+Remote publication/configuration has not been performed. Missing logo, project ID, real supported-version selection or unpublished source URLs are author/account fields to complete before submitting. Private toolkit/helpers/recorders and private development reports are excluded.
+
+## Official field references
+
+- [Creating and submitting a project](https://support.curseforge.com/support/solutions/articles/9000197241)
+- [Submission fields, original logo and project links](https://support.curseforge.com/support/solutions/articles/9000199552-project-submission-guide-and-tips)
+- [Upload API](https://support.curseforge.com/support/solutions/articles/9000197321)
