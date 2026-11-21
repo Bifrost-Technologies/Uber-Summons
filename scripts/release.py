@@ -1,5 +1,4 @@
 print("=== CurseForge Upload Debug ===")
-print("Project:", repr(project))
 print("Game Versions:", repr(ids))
 print("Release Type:", release_type)
 print("Archive:", archive.name)
