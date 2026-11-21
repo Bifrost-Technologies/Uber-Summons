@@ -1,12 +1,3 @@
-print("=== CurseForge Upload Debug ===")
-print("Game Versions:", repr(ids))
-print("Release Type:", release_type)
-print("Archive:", archive.name)
-print("Metadata:")
-print(json.dumps(metadata, indent=2))
-print("Upload URL:", f"https://www.curseforge.com/api/projects/{project}/upload-file")
-print("===============================")
-
 request = urllib.request.Request(
     f"https://www.curseforge.com/api/projects/{project}/upload-file",
     data=body,
