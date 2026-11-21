@@ -46,6 +46,17 @@ local function pump()
  error("Network did not drain")
 end
 current="Buyer-Realm"
+buyer:StatsDB().publicStats=false;buyer.queue={};buyer.pendingNetworkReport=nil;buyer.adminOnlineAt=nil;buyer.auditPingAt=nil
+buyer:ReportNetwork();local privateBeforeHandshake,presencePing=false,false
+for _,packet in ipairs(buyer.queue)do
+ if buyer.NameKey(packet.target)==buyer.NameKey(founder)and packet.text:match("^ME7|")then privateBeforeHandshake=true end
+ if buyer.NameKey(packet.target)==buyer.NameKey(founder)and packet.text=="ADMINPING4"then presencePing=true end
+end
+check(not privateBeforeHandshake and buyer.pendingNetworkReport,"Private status waits for founder online confirmation")
+check(presencePing,"Offline private status requests a paced online handshake")
+current=founder;admin:Receive("ADMINPING4","Buyer-Realm","WHISPER");pump()
+check(not buyer.pendingNetworkReport and admin.privateNetworkUsers[admin.NameKey("Buyer-Realm")].public==false,"Latest private status flushes after founder confirms online")
+current="Buyer-Realm"
 check(buyer:Approved(buyer.FOUNDER),"Founder is always approved")
 check(buyer:ProviderDirectory()[1]==buyer.FOUNDER,"Founder always listed offline")
 check(not buyer:ProviderLive(buyer.FOUNDER),"Founder is not falsely live")

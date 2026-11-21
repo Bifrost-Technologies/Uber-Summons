@@ -23,23 +23,41 @@ function U:PublicUserCount()
  for k,r in pairs(self.networkUsers)do if now()-r.at>120 then self.networkUsers[k]=nil elseif k~=self.NameKey(me())then n=n+1 end end
  return n
 end
+function U:RequestFounderPresence()
+ if self:IsDispatcher()or(self.adminOnlineAt and now()-self.adminOnlineAt<90)then return true end
+ if now()-(self.auditPingAt or 0)<60 or #self.queue>=75 then return false end
+ self.auditPingAt=now();return self:Send({'ADMINPING4'},self.FOUNDER)
+end
+function U:FlushPrivateNetworkReport()
+ if self:IsDispatcher()then self.pendingNetworkReport=nil;return false end
+ if not self.pendingNetworkReport or not self.adminOnlineAt or now()-self.adminOnlineAt>=90 then return false end
+ local privacy=self:StatsDB();local _,realm=self:Network()
+ if not self:Send({'ME7',realm,privacy.publicStats and '1'or'0',tostring(now())},self.FOUNDER)then return false end
+ self.pendingNetworkReport=nil;return true
+end
 function U:ReportNetwork()
  local privacy=self:StatsDB();local _,realm=self:Network();local packet={'ME7',realm,privacy.publicStats and '1'or '0',tostring(now())}
- local targets={};targets[self.NameKey(self.FOUNDER)]=self.FOUNDER
+ local targets={};local founderKey=self.NameKey(self.FOUNDER)
  if privacy.publicStats then
   if IsInGuild and IsInGuild()then self:Send(packet,nil,'GUILD')end
-  for i,who in ipairs(self:ActiveDrivers())do if i<=10 then targets[self.NameKey(who)]=who end end
+  for i,who in ipairs(self:ActiveDrivers())do
+   local key=self.NameKey(who)
+   if i<=10 and key~=founderKey then targets[key]=who end
+  end
  end
  for _,who in pairs(targets)do if self.NameKey(who)~=self.NameKey(me())and #self.queue<75 then self:Send(packet,who)end end
  if self:IsDispatcher()then self.privateNetworkUsers[self.NameKey(me())]={name=me(),at=now(),public=privacy.publicStats==true}end
+ if not self:IsDispatcher()then
+  self.pendingNetworkReport=true
+  if not self:FlushPrivateNetworkReport()then self:RequestFounderPresence()end
+ end
  self.statsAt=now()
 end
 function U:SetPublicStats(enabled)
  self:StatsDB().publicStats=enabled==true
  if not enabled then
   if IsInGuild and IsInGuild()then self:Send({'LEAVE7'},nil,'GUILD')end
-  self:Send({'LEAVE7'},self.FOUNDER)
-  for _,who in ipairs(self:ActiveDrivers())do if #self.queue<70 then self:Send({'LEAVE7'},who)end end
+  for _,who in ipairs(self:ActiveDrivers())do if self.NameKey(who)~=self.NameKey(self.FOUNDER)and #self.queue<70 then self:Send({'LEAVE7'},who)end end
  end
  self:ReportNetwork();self:Refresh()
 end
@@ -145,6 +163,9 @@ local tick=U.Tick
 function U:Tick()
  tick(self);if not self.db then return end
  if now()-(self.backgroundDiscoverAt or 0)>=60 and #self.queue<25 then self.backgroundDiscoverAt=now();self:DiscoverDrivers()end
+ if self.pendingNetworkReport then
+  if not self:FlushPrivateNetworkReport()then self:RequestFounderPresence()end
+ end
  if now()-(self.statsAt or 0)>=45 and #self.queue<35 then self:ReportNetwork()end
  self:MaybeExpandSummonRaid()
  if self:IsDispatcher()then for k,r in pairs(self.privateNetworkUsers or {})do if now()-r.at>120 then self.privateNetworkUsers[k]=nil end end end

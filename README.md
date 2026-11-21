@@ -2,7 +2,7 @@
 
 Warlock summons, Mage portals, & Server Phasing all in one World of Warcraft addon: reviewed provider cards, itemized prices, advance reservations, setup status, map positions and receipt/delivery timelines.
 
-Current source: **0.4.0-beta.1**, targeting **Forever / Interface 16001**. Open **`/uber`** in game. This is a beta with live-client checks still required.
+Current source: **0.5.0-beta.11**, targeting **Forever / Interface 16001**. Open **`/uber`** in game. This is a beta with live-client checks still required.
 
 ## Features
 
@@ -39,7 +39,7 @@ On Windows, install a Lua 5.1+ compatible runner or LuaJIT/Fengari, plus Node.js
 .\Build.ps1 -LuaRunner 'C:\path\to\lua.exe'
 ```
 
-The script checks all four Lua suites, manifest declarations, public source scope, raw ZIP paths/local headers/decompression/CRCs and source/archive hashes. Generated artifacts go to `dist/`, with author materials under `share/Uber-submission/`; these are intentionally ignored by Git. No game folder or account is changed by a build.
+The script checks all five Lua suites, manifest declarations, public source scope, raw ZIP paths/local headers/decompression/CRCs and source/archive hashes. Runtime TGA assets are tracked and packaged. Generated artifacts go to `dist/`, with author materials under `share/Uber-submission/`; these are intentionally ignored by Git. No game folder or account is changed by a build.
 
 ## GitHub and releases
 
@@ -52,9 +52,9 @@ MIT License. Independent community project, not affiliated with Uber Technologie
 
 ## Source-only tracking
 
-Only Lua, required .toc manifests, Markdown, licenses, source build/verification scripts and Git/editor metadata are included. Images, archives, generated releases, local settings and credentials are ignored. WoW loads Lua directly; no C++ compilation is required. Run Build.ps1 to validate and package in one step. Submission artwork is optional for the build; supply it locally at docs/uber/uber-logo-400.png when needed, without committing it.
+Lua, manifests, Markdown, licenses, build/verification scripts and required runtime TGA assets are tracked. Generated releases, local settings, credentials and submission-only artwork are ignored. WoW loads Lua directly; no C++ compilation is required. Run Build.ps1 to validate and package in one step.
 
 
 ## Current release
 
-Uber 0.5.0-beta.1 adds star-only feedback for corroborated completed orders and gold names for native-confirmed Tranquility providers. Reviews are never pre-populated; provider-reported summaries are labeled. The separate Tranquility toolkit provides its own membership vault and guild work board. Run `./scripts/check-public-source.ps1 -Repository .` to check source-only tracking and credential signatures. `./Build.ps1` validates and packages this addon without changing game folders or publishing.
+Uber 0.5.0-beta.11 adds the first-run welcome splash and minimap guide, plus founder-online gating for private network status reports. The splash uses the supplied 1152×768 artwork at a proportional 768×512 display size. Run `./Build.ps1` to validate and package the addon without changing game folders or publishing.

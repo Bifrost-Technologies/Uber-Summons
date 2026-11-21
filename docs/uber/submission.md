@@ -1,4 +1,4 @@
-# Uber 0.4.0-beta.1 — submission worksheet
+# Uber 0.5.0-beta.11 — submission worksheet
 
 Prepared 2026-11-17. The previous file received “Failed to verify archive.” Its packaging portability defect has been repaired; this new feature release has not been uploaded by the agent. Update the existing project rather than creating a duplicate.
 
@@ -15,12 +15,12 @@ Prepared 2026-11-17. The previous file received “Failed to verify archive.” 
 | License | MIT |
 | Required dependencies / related projects | None; leave empty |
 | Optional integration | TranquilityLFG, if installed; Uber works without it |
-| File | Uber-0.4.0-beta.1.zip — upload this file alone |
-| File display name | Uber 0.4.0-beta.1 |
+| File | Uber-0.5.0-beta.11.zip — upload this file alone |
+| File display name | Uber 0.5.0-beta.11 |
 | Release type | Beta |
 | Game version/flavor | Exact tested Forever build / Interface 16001; select its actual tag, never unrelated Retail/Classic tags |
 | Description | Paste DESCRIPTION.md from the same release folder |
-| Changelog | Paste the 0.4.0-beta.1 section of CHANGELOG.md |
+| Changelog | Paste the 0.5.0-beta.11 section of CHANGELOG.md |
 | Logo | uber-logo-400.png — exactly 400×400, AI-generated fantasy branding |
 | Screenshots | Author's real in-game captures; design previews are not screenshots |
 | Comments | Enable, or supply a working support channel |

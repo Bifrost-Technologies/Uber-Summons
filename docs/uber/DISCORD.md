@@ -10,6 +10,6 @@ Mage portals include a configured 22s minimum per portal cast; additional fees, 
 
 Receipts & delivery timeline distinguishes native mailbox observations, provider casts and customer arrival reports. Single-person delivery can complete automatically after party/cast/matching arrival checks; Warlocks also match the summon offer. Reports are client evidence, not guaranteed proof of delivery or a refund service.
 
-All addon packets run without opening chat or interrupting movement. No C++ helper is required. Version 0.4.0-beta.1 remains a beta: report issues with the exact client build and steps. Live multiplayer/spell/mail checks are still in progress. The optional Guild LFG button opens TranquilityLFG if installed.
+All addon packets run without opening chat or interrupting movement. No C++ helper is required. Version 0.5.0-beta.11 remains a beta: report issues with the exact client build and steps. Live multiplayer/spell/mail checks are still in progress. The optional Guild LFG button opens TranquilityLFG if installed.
 
 The fantasy logo is AI-generated branding, not gameplay. Independent community addon, not affiliated with Uber Technologies, Blizzard or CurseForge.

@@ -1,3 +1,9 @@
+# 0.5.0-beta.11
+
+- Added the supplied Uber Summons splash artwork in a compact 768×512 welcome window, with a minimap-icon spotlight and `/uberintro` replay.
+- Private network status waits for the founder's online confirmation; only the latest pending status is sent after the handshake.
+- Kept version 0.5.0-beta.11 as the latest release.
+
 # 0.5.0-beta.1
 
 - Added observed network user counts, creator-only private presence census, public-stat opt-out and explicit privacy disclosure.

@@ -83,7 +83,7 @@ function U:CreateMinimap()
  local b=CreateFrame('Button','UberMinimapButton',Minimap);self.minimapButton=b;b:SetSize(32,32);b:SetFrameStrata('MEDIUM');b:SetFrameLevel(10);b:RegisterForClicks('LeftButtonUp','RightButtonUp');b:RegisterForDrag('LeftButton');b:EnableMouse(true)
  local icon=b:CreateTexture(nil,'ARTWORK');icon:SetAllPoints();icon:SetTexture(self.icon)
  self.minimapBadge=b:CreateFontString(nil,'OVERLAY','GameFontNormalSmall');self.minimapBadge:SetPoint('TOPRIGHT',4,4);self.minimapBadge:SetTextColor(1,.85,.1)
- b:SetScript('OnClick',function(_,which)if which=='RightButton'then U:ShowMailbox()elseif U.frame and U.frame:IsShown()then U.frame:Hide()else U:Show()end end)
+ b:SetScript('OnClick',function(_,which)U:HideMinimapGuide();if which=='RightButton'then U:ShowMailbox()elseif U.frame and U.frame:IsShown()then U.frame:Hide()else U:Show()end end)
  b:SetScript('OnDragStart',function(self)self:SetScript('OnUpdate',function()
   if not GetCursorPosition or not Minimap.GetCenter then return end
   local x,y=GetCursorPosition();local cx,cy=Minimap:GetCenter();local scale=Minimap:GetEffectiveScale()
@@ -95,6 +95,52 @@ function U:CreateMinimap()
  b:SetScript('OnEnter',function(self)if GameTooltip then local unread,total=U:NotificationCounts();GameTooltip:SetOwner(self,'ANCHOR_LEFT');GameTooltip:SetText('Uber');GameTooltip:AddLine('Left-click: open/close · Right-click: mailbox',1,1,1);GameTooltip:AddLine(unread..' unread / '..total..' notifications',.4,1,.7);GameTooltip:AddLine('Drag to move around minimap.',.8,.8,.8);GameTooltip:Show()end end)
  b:SetScript('OnLeave',function()if GameTooltip then GameTooltip:Hide()end end)
  self:PositionMinimap();self:RefreshNotifications()
+end
+function U:HideMinimapGuide()
+ if self.minimapGuide then self.minimapGuide:Hide()end
+ if self.minimapGlow then self.minimapGlow:Hide();self.minimapGlow:SetScript('OnUpdate',nil)end
+end
+function U:ShowMinimapGuide()
+ if not self.minimapButton then self:CreateMinimap()end
+ local b=self.minimapButton;if not b then return false end
+ if not self.minimapGlow then
+  local ring=CreateFrame('Frame',nil,UIParent);ring:SetSize(54,54);ring:SetFrameStrata('TOOLTIP');ring:SetFrameLevel(100);ring:EnableMouse(false)
+  ring.texture=ring:CreateTexture(nil,'OVERLAY');ring.texture:SetAllPoints();ring.texture:SetTexture('Interface\\Buttons\\UI-ActionButton-Border');ring.texture:SetBlendMode('ADD')
+  self.minimapGlow=ring
+ end
+ self.minimapGlow:ClearAllPoints();self.minimapGlow:SetPoint('CENTER',b,'CENTER',0,0);self.minimapGlow:Show()
+ self.minimapGlow:SetScript('OnUpdate',function(frame)frame.texture:SetAlpha(.58+.35*math.sin((GetTime and GetTime()or now())*5))end)
+ if not self.minimapGuide then
+  local f=CreateFrame('Frame','UberMinimapGuide',UIParent,'BackdropTemplate');self.minimapGuide=f;f:SetSize(285,112);f:SetFrameStrata('TOOLTIP');f:SetClampedToScreen(true);f:EnableMouse(true)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=12});f:SetBackdropColor(.025,.045,.075,.98)
+  local title=f:CreateFontString(nil,'OVERLAY','GameFontNormal');title:SetPoint('TOPLEFT',16,-13);title:SetText('UBER IS ON YOUR MINIMAP')
+  local text=f:CreateFontString(nil,'OVERLAY','GameFontHighlightSmall');text:SetPoint('TOPLEFT',16,-36);text:SetWidth(252);text:SetJustifyH('LEFT');text:SetText('Left-click the glowing icon to open or close Uber. Right-click opens your notification mailbox.')
+  self.minimapGuideDone=button(f,'Got it',100,-78,85,24,function()U:HideMinimapGuide()end)
+ end
+ local x=b.GetCenter and b:GetCenter();local rightOfCenter=x and UIParent.GetWidth and x>UIParent:GetWidth()/2
+ self.minimapGuide:ClearAllPoints()
+ if rightOfCenter then self.minimapGuide:SetPoint('RIGHT',b,'LEFT',-14,0)else self.minimapGuide:SetPoint('LEFT',b,'RIGHT',14,0)end
+ self.minimapGuide:Show();return true
+end
+function U:ShowWelcome(force)
+ if not self.db or(self:NotificationDB().welcomeSeen and not force)then return false end
+ if not self.welcomeFrame then
+  local f=CreateFrame('Frame','UberWelcome',UIParent,'BackdropTemplate');self.welcomeFrame=f;f:SetSize(768,512);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=18});f:SetBackdropColor(.02,.025,.06,1)
+  local art=f:CreateTexture(nil,'BACKGROUND');art:SetAllPoints();art:SetTexture('Interface\\AddOns\\Uber\\UberSplash');art:SetTexCoord(.21875,.78125,.125,.875)
+  local shade=f:CreateTexture(nil,'ARTWORK');shade:SetAllPoints();shade:SetTexture('Interface\\Buttons\\WHITE8X8');shade:SetVertexColor(.015,.02,.055);shade:SetAlpha(.34)
+  local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalHuge');title:SetPoint('TOP',0,-30);title:SetText('UBER SUMMONS');title:SetTextColor(.75,.95,1)
+  local subtitle=f:CreateFontString(nil,'OVERLAY','GameFontHighlight');subtitle:SetPoint('TOP',title,'BOTTOM',0,-8);subtitle:SetText('WARLOCK SUMMONS  |  MAGE PORTALS  |  DIMENSIONAL TRAVEL');subtitle:SetTextColor(.78,.85,1)
+  local prompt=f:CreateFontString(nil,'OVERLAY','GameFontNormal');prompt:SetPoint('BOTTOM',0,88);prompt:SetText('Your next adventure is only a click away.')
+  local continue=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');self.welcomeContinue=continue;continue:SetSize(300,42);continue:SetPoint('BOTTOM',0,34);continue:SetText('Show me the Uber minimap icon')
+  local function continueWelcome()
+   U:NotificationDB().welcomeSeen=true;f:Hide();U:ShowMinimapGuide()
+  end
+  continue:SetScript('OnClick',continueWelcome)
+  button(f,'X',723,-15,28,25,continueWelcome)
+  table.insert(UISpecialFrames,'UberWelcome')
+ end
+ self.welcomeFrame:Show();return true
 end
 local init=U.Init
 function U:Init()init(self);self:NotificationDB();self:CreateMinimap()end
@@ -125,4 +171,5 @@ function U:Audit(kind,subject,detail,source)
  if noteworthy[kind]then self:NotifyInbox(kind:gsub('_',' '),clean(subject,100)..' · '..clean(detail,300),kind..':'..clean(subject,100)..':'..clean(detail,100))end
 end
 SLASH_UBERMAIL1='/ubermail';SlashCmdList.UBERMAIL=function()U:ShowMailbox()end
-local ready=CreateFrame('Frame');ready:RegisterEvent('PLAYER_LOGIN');ready:SetScript('OnEvent',function()if U.db then U:CreateMinimap()end end)
+SLASH_UBERINTRO1='/uberintro';SlashCmdList.UBERINTRO=function()U:ShowWelcome(true)end
+local ready=CreateFrame('Frame');ready:RegisterEvent('PLAYER_LOGIN');ready:SetScript('OnEvent',function()if U.db then U:CreateMinimap();if not U:NotificationDB().welcomeSeen then U:ShowWelcome()end end end)

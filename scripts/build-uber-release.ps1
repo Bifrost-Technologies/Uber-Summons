@@ -25,15 +25,19 @@ try {
     $adminTests=@(& $LuaRunner tests/uber-admin.lua 2>&1)
     $adminTests | ForEach-Object {Write-Host $_}
     if($LASTEXITCODE -ne 0 -or [string]$adminTests[-1] -notmatch '^PASS: \d+ Uber administration and delivery assertions$'){throw 'Uber administration/delivery tests failed'}
+    $notifications=@(& $LuaRunner tests/uber-notifications.lua 2>&1)
+    $notifications | ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0 -or [string]$notifications[-1] -notmatch '^PASS: \d+ Uber notification assertions$'){throw 'Uber notification tests failed'}
     New-Item -ItemType Directory -Path dist -Force | Out-Null
     $manifest=Get-Content Uber/Uber.toc -Raw
     if($manifest -ne (Get-Content Uber/Uber_Camelot.toc -Raw)){throw 'Manifests differ'}
     $version=[regex]::Match($manifest,'(?m)^## Version: (.+)\r?$').Groups[1].Value.Trim()
     if($version -notmatch '^\d+\.\d+\.\d+(?:-beta\.\d+)?$'){throw 'Invalid version'}
     $declared=@($manifest -split '\r?\n' | Where-Object {$_ -and -not $_.StartsWith('#')})
-    $allowed=@('Uber.toc','Uber_Camelot.toc','README.md','ADMIN-AND-DELIVERY.md','LICENSE','CHANGELOG.md')+$declared
+    $allowed=@('Uber.toc','Uber_Camelot.toc','README.md','ADMIN-AND-DELIVERY.md','LICENSE','CHANGELOG.md','UberIcon.tga','UberSplash.tga')+$declared
+    $sourceOnly=@('.pkgmeta')
     foreach($file in Get-ChildItem Uber -File){
-        if($file.Name -notin $allowed){throw "Unexpected runtime file: $($file.Name)"}
+        if($file.Name -notin ($allowed+$sourceOnly)){throw "Unexpected runtime file: $($file.Name)"}
         if($file.Extension -eq '.lua' -and [IO.File]::ReadAllText($file.FullName) -match '\b(?:SendInput|RunMacroText|loadstring|GuildInvite|ReloadUI)\b|TitansRecruit|D:\\Titans'){throw 'Public source audit failed'}
     }
     foreach($file in $declared){if(-not(Test-Path -LiteralPath (Join-Path Uber $file))){throw "Missing file $file"}}
@@ -75,7 +79,7 @@ try {
     Copy-Item -LiteralPath $zip,($zip+'.sha256') -Destination $handoff -Force
     Copy-Item -Path 'docs/uber/*' -Destination $handoff -Recurse -Force
     Copy-Item -LiteralPath 'Uber/LICENSE','Uber/CHANGELOG.md' -Destination $handoff -Force
-    Set-Content -LiteralPath (Join-Path $handoff 'PREFLIGHT.txt') -Value @($result[-1],$integration[-1],$services[-1],$adminTests[-1],"SHA256 $hash",'PASS: raw ZIP paths, local headers, decompression and CRC checks','PASS: manifest declarations, public source audit, ZIP file list and per-file hash verification','PENDING: live mailbox/multiplayer tests, screenshots, client/name validation and commission policy review; corrected archive not uploaded by agent') -Encoding utf8
+    Set-Content -LiteralPath (Join-Path $handoff 'PREFLIGHT.txt') -Value @($result[-1],$integration[-1],$services[-1],$adminTests[-1],$notifications[-1],"SHA256 $hash",'PASS: raw ZIP paths, local headers, decompression and CRC checks','PASS: manifest declarations, public source audit, ZIP file list and per-file hash verification','PENDING: live mailbox/multiplayer tests, screenshots, client/name validation and commission policy review; corrected archive not uploaded by agent') -Encoding utf8
     # Keep a single-version handoff so old ZIPs cannot be mistaken for this candidate.
     $current=Join-Path $handoff ('release-'+$version)
     New-Item -ItemType Directory -Path $current -Force | Out-Null

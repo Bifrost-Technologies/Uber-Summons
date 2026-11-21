@@ -2,6 +2,8 @@
 
 One addon for Warlock summons, Mage portals, customers and reviewed providers. Open **/uber**. Targets Forever Interface 16001; standalone, MIT, no required addon or executable dependency.
 
+Current source: **0.5.0-beta.11**. This is a beta with live-client checks still required.
+
 ## Start here
 
 - Drivers: browse approved providers. Creator **Bîfrost Titan** stays listed offline. Gray means offline/unconfirmed, not ready service.
@@ -27,9 +29,11 @@ Uber prepares recipient/reference text only; the player enters and sends money t
 
 Native addon packets do not open chat, paste text or intercept movement/typing. Visible readiness/guild requests are clicked native whispers. No automatic casting, movement, recruitment loop or C++ helper is included. Character names, order notes, schedules, reviews, prices and service evidence are saved locally with bounded retention. Avoid sensitive notes. Ordinary logout/reload persists records; crashes may lose recent changes. Editable addons are not tamper-proof financial ledgers or account-authentication servers.
 
+On first login after this update, the supplied 1152×768 Uber Summons artwork appears in a centered 768×512 welcome window. Continue to highlight the minimap launcher, or use `/uberintro` to replay the guide. Private network-status reports wait for the accented creator character to confirm online; while it is offline, only the latest pending status is retained locally.
+
 ## Release checks
 
-0.4.0-beta.1 is a beta candidate. Automated simulation is supplemented by required live mailbox, multiplayer, party/cast/arrival and UI checks. The commission model still requires platform-policy clarification. No claim of public acceptance, complete spell coverage, server-certified delivery or permanent global creator ownership is made. The addon is independent of Uber Technologies, Blizzard and CurseForge.
+0.5.0-beta.11 is a beta candidate. Automated simulation is supplemented by required live mailbox, multiplayer, party/cast/arrival and UI checks. The commission model still requires platform-policy clarification. No claim of public acceptance, complete spell coverage, server-certified delivery or permanent global creator ownership is made. The addon is independent of Uber Technologies, Blizzard and CurseForge.
 
 ## Network activity and shared sessions
 

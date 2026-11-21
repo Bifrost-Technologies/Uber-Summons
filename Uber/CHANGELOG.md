@@ -1,3 +1,8 @@
+## 0.5.0-beta.11
+
+- Added the first-run Uber Summons welcome splash, the supplied 1152×768 artwork displayed at 768×512 without stretching, a pulsing minimap-icon guide, and `/uberintro` replay.
+- Private network status now waits for the founder's online confirmation; only the latest pending status is sent after the handshake. Founder presence requests share a paced queue with delivery reports.
+
 ## 0.5.0-beta.10
 
 Current realm/faction directory, service availability and layer-keeper request source packaged. Preserve documented limitations on town precision, layer identity and cooldown estimates.

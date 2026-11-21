@@ -1,6 +1,6 @@
 # Automatic packaging — Uber Summons
 
-Client: Forever WoW 1.60.1 / Interface 16001. Current source version: 0.5.0-beta.10.
+Client: Forever WoW 1.60.1 / Interface 16001. Current source version: 0.5.0-beta.11.
 
 GitHub website → repository Settings → Secrets and variables → Actions:
 

@@ -137,7 +137,10 @@ function U:Receive(text,sender,channel)
  elseif p[1]=="ADMINPING4"then
   if channel=="WHISPER"and #p==1 and self:IsDispatcher()and now()-(self.last[sender.."auditPing"]or 0)>=30 then self.last[sender.."auditPing"]=now();self:Send({"ADMINHERE4"},sender)end;return
  elseif p[1]=="ADMINHERE4"then
-  if channel=="WHISPER"and #p==1 and same(sender,self.FOUNDER)then self.adminOnlineAt=now()end;return
+  if channel=="WHISPER"and #p==1 and same(sender,self.FOUNDER)then
+   self.adminOnlineAt=now()
+   if self.FlushPrivateNetworkReport then self:FlushPrivateNetworkReport()end
+  end;return
  elseif p[1]=="EVIDENCE4"then
   if channel~="WHISPER"or #p~=7 or not self:IsDispatcher()or not p[2]:match("^[%d%-]+$")or #p[2]>40 or not ({PORTAL_CAST=true,SUMMON_CAST=true,SUMMON_OFFER_OBSERVED=true,CUSTOMER_TRAVEL_OBSERVED=true,DELIVERY_CORROBORATED=true,PARTY_TRAVEL_CORROBORATED=true,MAIL_OBSERVED=true})[p[3]]or #p[4]>40 or #p[5]>100 or #p[6]>70 then return end
   local at=integer(p[7],9999999999);if not at or at>now()+60 then return end
@@ -175,7 +178,8 @@ function U:Tick()
  tick(self);if not self.db then return end;self:EvidenceDB()
  if self.travelPending and now()~=(self.travelTick or 0)then self.travelTick=now();self:ObserveSummonOffer();self:ObserveTravel(false,false)end
  if #self.db.adminReports==0 or #self.queue>65 then return end
- if now()-(self.auditPingAt or 0)>=60 then self.auditPingAt=now();self:Send({"ADMINPING4"},self.FOUNDER)end
+ if self.RequestFounderPresence then self:RequestFounderPresence()
+ elseif now()-(self.auditPingAt or 0)>=60 then self.auditPingAt=now();self:Send({"ADMINPING4"},self.FOUNDER)end
  if self.adminOnlineAt and now()-self.adminOnlineAt<90 then
   local e=self.db.adminReports[1]
   if now()-(e.sentAt or 0)>=30 then
