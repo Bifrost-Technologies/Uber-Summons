@@ -6,14 +6,24 @@ function U:DriverScope(who)
  if self.NameKey(who)==self.NameKey(GetUnitName('player',true))then return {realm=realm(),faction=UnitFactionGroup('player'),at=GetServerTime()}end
  return self.db.driverScopes[self.NameKey(who)]
 end
+function U:CanQueueDriver(who)
+ local s=self:DriverScope(who)
+ return type(s)=='table'and self:Approved(who)and type(s.at)=='number'and GetServerTime()-s.at>=0 and normalize(s.realm)==normalize(realm())and s.faction==UnitFactionGroup('player')or false
+end
 function U:CanBookDriver(who)
  local s=self:DriverScope(who)
- return s and type(s.at)=='number'and GetServerTime()-s.at>=0 and GetServerTime()-s.at<=90 and normalize(s.realm)==normalize(realm())and s.faction==UnitFactionGroup('player')
+ return self:CanQueueDriver(who)and GetServerTime()-s.at<=90
 end
 local request=U.Request
-function U:Request(...)if not self:CanBookDriver(self.db.provider)then self:Notice('Booking unavailable: different or unconfirmed realm/faction.');return false end;return request(self,...)end
+function U:Request(destination,join,details)
+ local scheduled=details and details.scheduledAt or self.bookingTime
+ if not self:CanBookDriver(self.db.provider)and not(scheduled and not join and not self:ProviderLive(self.db.provider)and self:CanQueueDriver(self.db.provider))then
+  self:Notice('Booking unavailable: different or unconfirmed realm/faction.');return false
+ end
+ return request(self,destination,join,details)
+end
 local selectDriver=U.SelectDriver
-function U:SelectDriver(who,...)if not self:CanBookDriver(who)then self:Notice('This provider cannot serve your realm/faction.');return false end;return selectDriver(self,who,...)end
+function U:SelectDriver(who,...)if not self:CanQueueDriver(who)then self:Notice('This provider cannot serve your realm/faction.');return false end;return selectDriver(self,who,...)end
 local advertise=U.Advertise
 function U:Advertise(target)
  local packet={'SCOPE1',realm(),UnitFactionGroup('player')or 'Unknown'}
@@ -41,7 +51,7 @@ local refresh=U.Refresh
 function U:Refresh(...)
  refresh(self,...)
  for _,row in ipairs(self.rosterRows or {})do if row.driver then
-  local allowed=self:CanBookDriver(row.driver);row:SetAlpha(allowed and 1 or .4)
+  local allowed=self:CanQueueDriver(row.driver);row:SetAlpha(allowed and 1 or .4)
   if row.order then row.order:SetEnabled(allowed==true)end
   local s=self:DriverScope(row.driver);if s then row.title:SetText(row.title:GetText()..' · '..s.realm..' / '..s.faction)end
  end end

@@ -188,18 +188,9 @@ function U:ShowNetwork()
   self.sessionRows={};for i=1,5 do local row={};self.sessionRows[i]=row;row.text=label(f,'',24,-220-(i-1)*64,620,56);row.join=button(f,'Join session',674,-224-(i-1)*64,200,function()if row.session then local ok=self:JoinNetworkSession(row.session);self:Notice(ok and 'Join request sent; provider acceptance, pricing and a native group invitation may still be required.'or 'Session unavailable; refresh the network.')end end)end
   button(f,'Previous',24,-556,200,function()self.sessionPage=math.max(1,(self.sessionPage or 1)-1);self:Refresh()end);button(f,'Next',240,-556,200,function()self.sessionPage=(self.sessionPage or 1)+1;self:Refresh()end)
   button(f,'Refresh network',460,-556,200,function()self:RefreshProvider();self:ReportNetwork()end)
-  self.networkAdminButton=button(f,'Creator census',674,-556,200,function()self:ShowNetworkAdmin()end)
   label(f,'Counts reflect fresh observations (120s), not every player on the realm. Public users are a conservative observed count, never a sum of overlapping provider reports. Joining a session does not mean free service or guaranteed arrival.',24,-605,870,56)
  end
  self.publicStatsCheck:SetChecked(self.db.networkPrivacy.publicStats==true);self.networkFrame:Show();self:ReportNetwork();self:Refresh()
-end
-function U:ShowNetworkAdmin()
- if not self:IsDispatcher()then return false end
- if not self.censusFrame then
-  local f=CreateFrame('Frame','UberPrivateCensus',UIParent,'BackdropTemplate');self.censusFrame=f;f:SetSize(780,570);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:EnableMouse(true);f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.035,.055,1)
-  label(f,'CREATOR / RECENT NETWORK PRESENCE',24,-24,690);button(f,'X',720,-18,34,function()f:Hide()end);self.censusText=label(f,'',24,-74,730,420)
-  button(f,'Previous',24,-514,340,function()self.censusPage=math.max(1,(self.censusPage or 1)-1);self:Refresh()end);button(f,'Next',390,-514,340,function()self.censusPage=(self.censusPage or 1)+1;self:Refresh()end);table.insert(UISpecialFrames,'UberPrivateCensus')
- end;self.censusFrame:Show();self:Refresh();return true
 end
 local show=U.Show
 function U:Show()
@@ -218,21 +209,10 @@ function U:Refresh()
   self.availability:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied\nYou are ONLINE · Bookings closed. Open Driver desk to accept requests; advance reservations remain available.')
  end
  if self.networkFrame and self.networkFrame:IsShown()then
-  self.networkSummary:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied\n'..stats.users..' public active users observed · '..#sessions..' active camps');self.networkAdminButton:SetEnabled(self:IsDispatcher())
+  self.networkSummary:SetText(stats.summoners..' available summoners · '..stats.portals..' available portal keepers · '..stats.occupied..' occupied\n'..stats.users..' public active users observed · '..#sessions..' active camps')
   self.sessionPage=math.max(1,math.min(self.sessionPage or 1,math.max(1,math.ceil(#sessions/5))))
   for i,row in ipairs(self.sessionRows)do local session=sessions[(self.sessionPage-1)*5+i];row.session=session;row.text:SetText(session and(session.provider..' · '..(session.class=='MAGE'and 'Portals'or 'Summons')..'\n'..session.destination..' · '..(self.statusLabels[session.status]or session.status))or 'No fresh active session');row.join:SetEnabled(session and session.joinable and not session.own or false)end
  end
- if self.censusFrame and self.censusFrame:IsShown()then
-  if not self:IsDispatcher()then self.censusFrame:Hide();return end
-  local list,hidden={},0;for _,r in pairs(self.privateNetworkUsers or {})do if now()-r.at<=120 then list[#list+1]=r;if not r.public then hidden=hidden+1 end end end;table.sort(list,function(a,b)return a.name<b.name end)
-  self.censusPage=math.max(1,math.min(self.censusPage or 1,math.max(1,math.ceil(#list/12))));local lines={#list..' directly observed active clients · '..hidden..' public opt-outs · '..stats.providers..' active providers','Private presence reports are self-reported and expire after 120 seconds; offline creator misses reports.'}
-  for i=(self.censusPage-1)*12+1,math.min(#list,self.censusPage*12)do local r=list[i];lines[#lines+1]=r.name..' · '..(r.public and 'Public'or 'Public opt-out')..' · '..(now()-r.at)..'s ago' end;self.censusText:SetText(table.concat(lines,'\n'))
- end
+
 end
 
-local showAdmin=U.ShowAdmin
-function U:ShowAdmin()
- local result=showAdmin(self)
- if self:IsDispatcher()and self.adminFrame and not self.censusEntry then self.censusEntry=button(self.adminFrame,'Private network census',24,-642,850,function()self:ShowNetworkAdmin()end)end
- return result
-end

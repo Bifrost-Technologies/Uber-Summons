@@ -1,6 +1,6 @@
 local U=Uber
 function U:SelectDriver(who)
-    self.db.provider=who;self.provider:SetText(who);self:Send({"Q"},who);self:Tab("Book a summon")
+    self.db.provider=who;self.provider:SetText(who);if self.PeerReachable and self:PeerReachable(who)then self:Send({"Q"},who)end;self:Tab("Book a summon")
 end
 function U:DriverAction(who,action)
     if not self:Approved(who)then return false end

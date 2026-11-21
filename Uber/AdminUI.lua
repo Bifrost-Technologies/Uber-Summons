@@ -36,48 +36,6 @@ function U:ShowSchedule()
  end
  self.scheduleFrame:Show();self:Refresh()
 end
-function U:AdminSelect(who)
- local p=self:ProviderPolicy(who);self.adminName:SetText(who);self.adminClass= self:DriverClass(who)
- self.adminBase:SetText(("%.4f"):format((p.standard or 0)/10000));self.adminPriority:SetText(("%.4f"):format((p.priority or 0)/10000))
- self.adminHours:SetText(p.hours);self.adminReason:SetText(p.reason or "Manual review");self.adminState:SetText((p.state or "APPROVED").." · "..self.adminClass)
-end
-function U:ShowAdmin()
- if not self:IsDispatcher()then self:Notice("Provider administration is restricted to "..self.FOUNDER.." on this realm.");return false end
- if not self.adminFrame then
-  local f=modal("UberAdministration",900,700,"UBER · CREATOR CONTROL ROOM");self.adminFrame=f
-  label(f,"Bîfrost Titan · Character-authenticated reviews · Changes are logged and published",24,-60,850)
-  label(f,"Provider name (exact native name, including realm if required)",24,-102,700)
-  self.adminName=edit(f,self.FOUNDER,24,-136,600,60)
-  button(f,"Load provider",644,-136,230,function()self:AdminSelect(self.adminName:GetText())end)
-  self.adminState=label(f,"WARLOCK",24,-182,850)
-  button(f,"Toggle Mage / Warlock",24,-216,280,function()self.adminClass=self.adminClass=="MAGE"and "WARLOCK"or "MAGE";self.adminState:SetText(self.adminClass)end)
-  label(f,"Additional base (gold)",330,-216,240);self.adminBase=edit(f,"0",580,-210,120,20)
-  label(f,"Priority extra (gold)",330,-260,240);self.adminPriority=edit(f,"0",580,-254,120,20)
-  label(f,"Regular hours + timezone",24,-304,220);self.adminHours=edit(f,"Hours not published",260,-298,610,70)
-  label(f,"Review / moderation reason",24,-348,230);self.adminReason=edit(f,"Manual review",260,-342,610,40)
-  local function change(state)
-   local ok=self:ManageProvider(self.adminName:GetText(),state,self.adminClass or "WARLOCK",self.adminBase:GetText(),self.adminPriority:GetText(),self.adminHours:GetText(),self.adminReason:GetText())
-   self:Notice(ok and "Provider policy saved and queued for distribution."or "Check identity, class, amounts, hours and reason. Founder cannot be removed or banned.");self:Refresh()
-  end
-  button(f,"Add / approve / unban",24,-392,270,function()change("APPROVED")end)
-  button(f,"Remove provider",314,-392,270,function()change("REMOVED")end)
-  button(f,"Ban provider",604,-392,270,function()change("BANNED")end)
-  label(f,"Provider directory · includes removed/banned entries for review",24,-444,830)
-  self.adminDirectory=label(f,"",24,-478,830,106)
-  button(f,"Load mailbox application",24,-596,270,function()
-   local apps={};for _,a in pairs(self.db.applications)do if a.status=="Needs review"then apps[#apps+1]=a end end;table.sort(apps,function(a,b)return a.at>b.at end)
-   if #apps==0 then self:Notice("Inspect your open mailbox first. No pending application has been read yet.");return end
-   self.adminApplicationIndex=(self.adminApplicationIndex or 0)%#apps+1;local a=apps[self.adminApplicationIndex]
-   self:AdminSelect(a.name);self.adminClass=a.class;self.adminState:SetText("APPLICATION · "..a.class.." · Read the original letter before approving.")
-  end)
-  button(f,"Next / load provider",314,-596,270,function()
-   self.adminIndex=(self.adminIndex or 1)+1;self:Refresh();if self.adminSelected then self:AdminSelect(self.adminSelected)end
-  end)
-  button(f,"Receipts & delivery audit",604,-596,270,function()self:ShowAudit()end)
-  label(f,"22s per Mage portal stays with the Mage. Pricing edits affect new quotes; accepted quotes retain their amounts. Ban reasons are internal moderation records, not a public finding of fraud.",24,-640,840,42)
- end
- self.adminClass=self.adminClass or "WARLOCK";self.adminFrame:Show();self:Refresh();return true
-end
 function U:ShowAudit()
  if not self.auditFrame then
   local f=modal("UberAudit",900,680,"UBER · RECEIPTS & DELIVERY TIMELINE");self.auditFrame=f
@@ -107,7 +65,7 @@ function U:Show()
   button(v,"Prepare application mail",12,-232,410,function()self:ApplyDriver(self.application:GetText())end)
   button(v,"Refresh reviewed providers",450,-232,410,function()self:RefreshProvider()end)
   label(v,"Your character is your identity. Applications do not open service until reviewed. Existing users must refresh the admin roster to receive revocations.",12,-292,850,64)
-  self.adminEntry=button(v,"Creator · manage providers",12,-382,410,function()self:ShowAdmin()end)
+  self.adminEntry=true -- Public builds contain no creator controls.
   button(v,"My receipts & delivery timeline",450,-382,410,function()self:ShowAudit()end)
   label(v,"Player-operated travel · Native addon messages · No chat input interception",12,-450,850,36)
   button(self.views["Book a summon"],"Schedule ahead / offline reservations",12,-494,865,function()self:ShowSchedule()end)
@@ -120,7 +78,6 @@ end
 local refresh=U.Refresh
 function U:Refresh()
  refresh(self);if not self.db then return end
- if self.adminEntry then self.adminEntry:SetEnabled(self:IsDispatcher())end
  if self.locationLabel and self:ProviderLive(self.db.provider)then
   local p=self.providerPositions and self.providerPositions[self.NameKey(self.db.provider)]
   if p and GetServerTime()-p.updated<=90 then
@@ -139,13 +96,6 @@ function U:Refresh()
   self.reservationPage=math.min(self.reservationPage or 1,math.max(1,#list));self.reservationSelected=list[self.reservationPage]
   local r=self.reservationSelected and self:Reservations()[self.reservationSelected]
   self.reservationLabel:SetText(r and ("Reservation "..self.reservationPage.." / "..#list.."\n"..r.provider.." · "..r.destination.."\n"..stamp(r.scheduledAt).."\n"..r.status)or "No saved offline reservations.")
- end
- if self.adminFrame and self.adminFrame:IsShown()then
-  if not self:IsDispatcher()then self.adminFrame:Hide();return end
-  local list={};for _,r in pairs(self.db.drivers)do list[#list+1]=r.name end;table.sort(list)
-  self.adminIndex=math.min(self.adminIndex or 1,math.max(1,#list));self.adminSelected=list[self.adminIndex]
-  local n=self.adminSelected;local p=n and self:ProviderPolicy(n)
-  self.adminDirectory:SetText(n and (self.adminIndex.." / "..#list.." · "..n.."\n"..(p.state or "APPROVED").." · "..self:DriverClass(n).."\n"..p.hours.."\n"..(p.reason or "Creator provider"))or "No providers.")
  end
  if self.auditFrame and self.auditFrame:IsShown()then
   local entries={};local filter=self.auditFilter:GetText():lower()

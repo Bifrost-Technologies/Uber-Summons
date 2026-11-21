@@ -1,3 +1,10 @@
+# 0.5.0-beta.12
+
+- Idle discovery no longer whispers offline cached drivers or the founder. Guild/group discovery and online friends remain peer-to-peer. The selected driver can be probed explicitly with Refresh driver.
+- Rides and queued reservations do not require the founder online. Both rider and chosen driver must be online together for delivery.
+- Driver applications use native mailbox drafts; the applicant reviews and clicks Send. Mail is available when the creator next logs in.
+- Creator approval, moderation, price management and creator UI moved to a separate private UberAdmin addon, excluded from all public manifests/packages.
+
 ## 0.5.0-beta.11
 
 - Added the first-run Uber Summons welcome splash, the supplied 1152×768 artwork displayed at 768×512 without stretching, a pulsing minimap-icon guide, and `/uberintro` replay.

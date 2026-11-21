@@ -19,7 +19,7 @@ function U:DriverDB()
  local r=self.db.drivers[k]
  if not r or not r.approved or r.class~="WARLOCK"or r.authority~=self.FOUNDER then self.db.drivers[k]={name=self.FOUNDER,class="WARLOCK",approved=true,authority=self.FOUNDER,at=0,founder=true}end
 end
-function U:IsDispatcher()return same(me(),self.FOUNDER)end
+function U:IsDispatcher()return false end -- Creator tools are supplied only by the private UberAdmin addon.
 local approved=U.Approved
 function U:Approved(who)
  self:DriverDB();if same(who,self.FOUNDER)then return true end
@@ -50,35 +50,6 @@ function U:ProviderDirectory()
 end
 local function packet(who,p)
  return {"ADMIN4",who,p.state,p.class,tostring(p.revision),tostring(p.standard),tostring(p.priority),p.hours,p.reason}
-end
-function U:SendPolicy(who,target)
- local p=self.db.providerPolicies[key(who)];if not p then return false end
- return self:Send(packet(who,p),target)
-end
-function U:ManageProvider(who,state,class,standard,priority,hours,reason)
- self:DriverDB()
- if not self:IsDispatcher()or not clean(who,60)or not ({APPROVED=true,REMOVED=true,BANNED=true})[state]or (class~="MAGE"and class~="WARLOCK")then return false end
- if same(who,self.FOUNDER)and (state~="APPROVED"or class~="WARLOCK")then return false end
- local a,b=self:Gold(standard),self:Gold(priority)
- if not a or not b or not clean(hours,70)or not clean(reason or "Manual review",40)then return false end
- local count=0;for _ in pairs(self.db.providerPolicies)do count=count+1 end
- if count>=200 and not self.db.providerPolicies[key(who)]then return false end
- local old=self.db.providerPolicies[key(who)]
- local p={name=who,state=state,class=class,standard=a,priority=b,hours=hours,reason=reason or "Manual review",revision=math.max(now(),old and old.revision+1 or 0)}
- if #table.concat(packet(who,p),"|")>240 then return false end
- self.db.providerPolicies[key(who)]=p
- self.db.drivers[key(who)]={name=who,class=class,approved=state=="APPROVED",authority=self.FOUNDER,at=now()}
- if self.db.applications[key(who)]then self.db.applications[key(who)].status=state end
- if same(who,me())and state~="APPROVED"then self.online=false end
- self:Audit("ADMIN_"..state,who,p.reason);self:SendPolicy(who,who)
- if IsInGuild and IsInGuild()then self:Send(packet(who,p),nil,"GUILD")end
- for target in pairs(self.subscribers or {})do if #self.queue<85 then self:SendPolicy(who,target)end end
- self:Refresh();return true
-end
-function U:ReviewDriver(who,approve)
- local app=self.db.applications[key(who)];if not app then return false end
- local result=self:ManageProvider(who,approve and "APPROVED"or "REMOVED",app.class or "WARLOCK","0","0","Hours not published","Application review")
- if result then app.status=approve and "Approved"or "Declined / removed"end;return result
 end
 -- Prepare native mail only. WoW's send button remains the player's action.
 function U:ApplyDriver(note)

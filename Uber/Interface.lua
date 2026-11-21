@@ -30,10 +30,10 @@ function U:Tab(tab)
     for name,b in pairs(self.tabs)do b:SetEnabled(name~=tab)end
     self:Refresh()
 end
-function U:RefreshProvider()
-    if self.DiscoverDrivers then self:DiscoverDrivers(true)end
-    if self.db.dispatcher and self.db.dispatcher~=""then self:Send({"ROSTER"},self.db.dispatcher)end
-    if self.db.provider~=""then self:Send({"Q"},self.db.provider)end
+function U:RefreshProvider(force)
+    if self.DiscoverDrivers then self:DiscoverDrivers(force==true)end
+    if self.db.dispatcher and self:PeerReachable(self.db.dispatcher)then self:Send({"ROSTER"},self.db.dispatcher)end
+    if self.db.provider~=""and self:PeerReachable(self.db.provider)then self:Send({"Q"},self.db.provider)end
 end
 function U:Show()
     if not self.db then return end
@@ -74,7 +74,7 @@ function U:Show()
             local o=self.db.orders[self.db.provider];local id=self:IsFresh(o)and o.status~="COMPLETE"and o.status~="CANCELLED"and self:Request(o.destination,o.id,{party=self.party:GetText(),note=self.note:GetText()})
             self:Notice(id and "Join request queued."or "Refresh a live camp and select an approved driver first.")
         end)
-        button(v,"Refresh driver",610,-448,264,function()self:RefreshProvider();self:Notice("Requested driver update.")end)
+        button(v,"Refresh driver",610,-448,264,function()self:RefreshProvider(true);self:Notice("Requested driver update.")end)
         v=self.views["Track & map"]
         local hero=panel(v,866,112,12,-4);self.tracking=label(hero,"",18,-18,830,85,true)
         self.stages={};for i,s in ipairs({"Accepted","On the way","Setting up","Service open"})do
@@ -121,12 +121,8 @@ function U:Show()
         label(v,"Describe your summoning experience, available buffs/supplies, schedule and preferred zones.",12,-174,860)
         self.application=edit(v,"",12,-210,860);self.application:SetMaxLetters(160)
         button(v,"Send driver application",12,-250,400,function()self:Notice(self:ApplyDriver(self.application:GetText())and "Application sent for manual review."or "Warlocks and Mages only. Configure your dispatcher and wait 60 seconds between applications.")end)
-        label(v,"DISPATCHER REVIEW",12,-304,860,30,true)
-        self.reviewLabel=label(v,"",12,-344,860,70)
-        button(v,"Next application",12,-420,270,function()self.reviewIndex=(self.reviewIndex or 1)+1;self:Refresh()end)
-        self.verified=check(v,"Verified class, spells/reagents/helpers, conduct and setup readiness",12,-464,820)
-        button(v,"Approve driver",300,-420,275,function()if self.reviewName and self.verified:GetChecked()then self:ReviewDriver(self.reviewName,true);self:Notice("Driver approved.")else self:Notice("Review the application and verify readiness first.")end end)
-        button(v,"Decline / revoke",590,-420,285,function()if self.reviewName then self:ReviewDriver(self.reviewName,false)end end)
+        self.reviewLabel=label(v,"Applications are reviewed from the creator's in-game mailbox.",12,-344,860,70)
+        self.verified=check(v,"Readiness",12,-464,820);self.verified:Hide()
         table.insert(UISpecialFrames,"UberPanel")
     end
     self.frame:Show();self:Tab(self.tab or "Drivers");self:RefreshProvider()

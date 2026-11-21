@@ -2,7 +2,7 @@
 ## Title: Uber
 ## Notes: Warlock summons and Mage portal requests, setup ETAs and shared locations.
 ## Author: Titan
-## Version: 0.5.0-beta.11
+## Version: 0.5.0-beta.12
 ## IconTexture: Interface\AddOns\Uber\UberIcon
 ## X-License: MIT
 ## SavedVariables: UberDB, SummonClickHelpersDB
@@ -30,3 +30,5 @@ SummonHelpers.lua
 PhaseKeepers.lua
 
 ServicePreferences.lua
+
+PeerDiscovery.lua

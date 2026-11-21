@@ -16,9 +16,9 @@ local function tell(s)if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage("
 local function fields(s)local t={};for v in (s.."|"):gmatch("(.-)|")do t[#t+1]=v end;return t end
 local function count(t)local n=0;for _ in pairs(t)do n=n+1 end;return n end
 function U:Init()
-    UberDB=UberDB or {};self.db=UberDB
+    UberDB=type(UberDB)=='table'and UberDB or {};self.db=UberDB
     self.db.provider=self.db.provider or ""
-    self.db.inbox=self.db.inbox or {};self.db.orders=self.db.orders or {};self.db.outbox=self.db.outbox or {}
+    for _,field in ipairs({'inbox','orders','outbox'})do if type(self.db[field])~='table'then self.db[field]={}end end
     self.db.serial=self.db.serial or 0
     -- Provider availability always requires an explicit click after login.
     self.online=false

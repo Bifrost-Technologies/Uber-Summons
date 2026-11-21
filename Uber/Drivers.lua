@@ -6,7 +6,7 @@ local function key(n)
 end
 function U:IsDispatcher()return key(GetUnitName("player",true))==key(self.db.dispatcher)and self.db.dispatcher~=""end
 function U:DriverDB()
-    self.db.dispatcher=self.db.dispatcher or "";self.db.drivers=self.db.drivers or {};self.db.applications=self.db.applications or {}
+    self.db.dispatcher=type(self.db.dispatcher)=='string'and self.db.dispatcher or '';self.db.drivers=type(self.db.drivers)=='table'and self.db.drivers or {};self.db.applications=type(self.db.applications)=='table'and self.db.applications or {}
 end
 function U:Approved(who)
     self:DriverDB();local r=self.db.drivers[key(who)]
@@ -15,22 +15,6 @@ end
 function U:DriverClass(who)
     self:DriverDB();local r=self.db.drivers[key(who)]
     return r and r.class=="MAGE"and "MAGE"or "WARLOCK"
-end
-function U:ApplyDriver(note)
-    self:DriverDB()
-    if self.db.dispatcher==""or type(note)~="string"or #note>160 or note:find("[%c|]")then return false end
-    local _,class=UnitClass("player");if class~="WARLOCK"and class~="MAGE"then return false end
-    if GetServerTime()-(self.appliedAt or 0)<60 then return false end
-    self.appliedAt=GetServerTime()
-    return self:Send({"APPLY",note~=""and note or "Travel provider application",class},self.db.dispatcher)
-end
-function U:ReviewDriver(who,approve)
-    self:DriverDB();if not self:IsDispatcher()or not self.db.applications[key(who)]then return false end
-    local r={name=who,approved=approve,authority=self.db.dispatcher,at=GetServerTime(),class=self.db.applications[key(who)].class or "WARLOCK"}
-    self.db.drivers[key(who)]=r;self.db.applications[key(who)].status=approve and "Approved"or "Declined / revoked"
-    self:Send({"DRIVER",who,approve and "1"or "0",tostring(r.at),r.class},who)
-    if IsInGuild and IsInGuild()then self:Send({"DRIVER",who,approve and "1"or "0",tostring(r.at),r.class},nil,"GUILD")end
-    self:Refresh();return true
 end
 function U:OpenService()
     if self.online then self.online=false;if self.db.active then self.db.active.status="CANCELLED";self:Publish()end;self:Refresh();return true end
