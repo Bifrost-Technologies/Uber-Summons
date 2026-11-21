@@ -1,6 +1,6 @@
 # Uber
 
-Warlock summons and Mage portal coordination in one World of Warcraft addon: reviewed provider cards, itemized prices, advance reservations, setup status, map positions and receipt/delivery timelines.
+Warlock summons, Mage portals, & Server Phasing all in one World of Warcraft addon: reviewed provider cards, itemized prices, advance reservations, setup status, map positions and receipt/delivery timelines.
 
 Current source: **0.4.0-beta.1**, targeting **Forever / Interface 16001**. Open **`/uber`** in game. This is a beta with live-client checks still required.
 
