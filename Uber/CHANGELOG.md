@@ -1,3 +1,7 @@
+## 0.5.0-beta.13
+
+Preserve offline reservations using cached same-realm/faction scope while requiring fresh scope for immediate rides and queued delivery. Stop offline probes when choosing an unavailable provider; bound the recent-peer cache; repair malformed saved root tables. Public administration/census tools remain excluded. Full-runtime multi-client simulations pass with the creator disconnected. Native mailbox/multiplayer smoke testing is still pending.
+
 # 0.5.0-beta.12
 
 - Idle discovery no longer whispers offline cached drivers or the founder. Guild/group discovery and online friends remain peer-to-peer. The selected driver can be probed explicitly with Refresh driver.

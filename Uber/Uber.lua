@@ -17,9 +17,9 @@ local function fields(s)local t={};for v in (s.."|"):gmatch("(.-)|")do t[#t+1]=v
 local function count(t)local n=0;for _ in pairs(t)do n=n+1 end;return n end
 function U:Init()
     UberDB=type(UberDB)=='table'and UberDB or {};self.db=UberDB
-    self.db.provider=self.db.provider or ""
+    self.db.provider=type(self.db.provider)=='string'and self.db.provider or ''
     for _,field in ipairs({'inbox','orders','outbox'})do if type(self.db[field])~='table'then self.db[field]={}end end
-    self.db.serial=self.db.serial or 0
+    self.db.serial=type(self.db.serial)=='number'and self.db.serial==self.db.serial and self.db.serial>=0 and self.db.serial<1000000000000 and math.floor(self.db.serial)or 0
     -- Provider availability always requires an explicit click after login.
     self.online=false
     local register=C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix or RegisterAddonMessagePrefix

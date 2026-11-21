@@ -14,7 +14,7 @@ end
 local driverDB=U.DriverDB
 function U:DriverDB()
  driverDB(self);self.db.dispatcher=self.FOUNDER
- self.db.providerPolicies=self.db.providerPolicies or {};self.db.audit=self.db.audit or {}
+ self.db.providerPolicies=type(self.db.providerPolicies)=='table'and self.db.providerPolicies or {};self.db.audit=type(self.db.audit)=='table'and self.db.audit or {}
  local k=key(self.FOUNDER)
  local r=self.db.drivers[k]
  if not r or not r.approved or r.class~="WARLOCK"or r.authority~=self.FOUNDER then self.db.drivers[k]={name=self.FOUNDER,class="WARLOCK",approved=true,authority=self.FOUNDER,at=0,founder=true}end

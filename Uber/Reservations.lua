@@ -1,7 +1,7 @@
 local U=Uber
 local function now()return GetServerTime()end
 local function same(a,b)return U.NameKey(a)==U.NameKey(b)end
-function U:Reservations()self.db.reservations=self.db.reservations or {};return self.db.reservations end
+function U:Reservations()self.db.reservations=type(self.db.reservations)=='table'and self.db.reservations or {};return self.db.reservations end
 function U:ParseBookingTime(text)
  if text==""then return nil end
  if type(text)~="string"then return false end
@@ -51,7 +51,7 @@ function U:Tick()
  if awaiting and now()-(self.reservationDiscover or 0)>=60 then self.reservationDiscover=now();self:DiscoverDrivers()end
  for id,r in pairs(self:Reservations())do
   if not r.deliveredID and r.scheduledAt<=now()+300 then r.status="EXPIRED — not delivered in time"
-  elseif not r.deliveredID and self:Approved(r.provider)and self:ProviderLive(r.provider)and #self.queue<70 then
+  elseif not r.deliveredID and self:Approved(r.provider)and self:ProviderLive(r.provider)and (not self.CanBookDriver or self:CanBookDriver(r.provider))and #self.queue<70 then
    local saved,at=self.db.provider,self.bookingTime;self.db.provider=r.provider;self.bookingTime=nil
    local sent=self:Request(r.destination,nil,r.details);self.db.provider=saved;self.bookingTime=at
    if sent then r.deliveredID=sent;r.status="Sent — awaiting provider receipt / acceptance";return end

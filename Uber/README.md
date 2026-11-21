@@ -2,7 +2,7 @@
 
 One addon for Warlock summons, Mage portals, customers and reviewed providers. Open **/uber**. Targets Forever Interface 16001; standalone, MIT, no required addon or executable dependency.
 
-Current source: **0.5.0-beta.11**. This is a beta with live-client checks still required.
+Current source: **0.5.0-beta.13**. This is a beta with live-client checks still required.
 
 ## Start here
 
@@ -10,9 +10,9 @@ Current source: **0.5.0-beta.11**. This is a beta with live-client checks still 
 - Book a summon: choose a provider, destination, group size, supplies and notes. Configure price/priority/tip options; Mage orders have a 22s minimum per portal cast.
 - Schedule ahead: choose a local date/time up to 30 days ahead. Offline reservations remain local until the provider returns; receipt and manual acceptance are separate steps.
 - Track & map: watch service status, chosen ETA and fresh provider location. Readiness whispers are clicked actions.
-- Driver desk: open service explicitly after login/reload, inspect requests and quotes, accept reservations or start setup, and update camp status.
+- Driver desk: approved providers open service at login by default; use the saved startup preference or close service as needed, inspect requests and quotes, accept reservations or start setup, and update camp status.
 - Recruitment: prepare a native-mail application to accented **Bîfrost Titan**, then review and click Send yourself. The creator reviews class, readiness and conduct manually.
-- Creator control room: add/approve/unban, remove or ban named providers; manage base/priority prices and regular hours including timezone. Native founder sender and increasing policy revisions authorize changes. Offline clients must refresh for updates.
+- Creator administration is supplied only in a separate private companion. Public Uber contains no provider management or creator census methods/UI. Clients accept policy updates only from the native creator identity and retain cached approvals. New clients need an authentic creator roster before booking newly added providers; existing approved peers keep working while the creator is offline.
 - Receipts & delivery timeline: inspect timestamped cast, travel, native mailbox and reported evidence; filter by character or order.
 
 ## Delivery rules
@@ -27,13 +27,15 @@ Uber prepares recipient/reference text only; the player enters and sends money t
 
 ## Communication and privacy
 
+Background discovery uses shared guild/group messages and confirmed online peers. Refresh driver can explicitly probe the selected provider. Offline reservations require a previously observed matching realm/faction and remain local until the provider is online; they are not delivered merely because they appear in your outbox.
+
 Native addon packets do not open chat, paste text or intercept movement/typing. Visible readiness/guild requests are clicked native whispers. No automatic casting, movement, recruitment loop or C++ helper is included. Character names, order notes, schedules, reviews, prices and service evidence are saved locally with bounded retention. Avoid sensitive notes. Ordinary logout/reload persists records; crashes may lose recent changes. Editable addons are not tamper-proof financial ledgers or account-authentication servers.
 
 On first login after this update, the supplied 1152×768 Uber Summons artwork appears in a centered 768×512 welcome window. Continue to highlight the minimap launcher, or use `/uberintro` to replay the guide. Private network-status reports wait for the accented creator character to confirm online; while it is offline, only the latest pending status is retained locally.
 
 ## Release checks
 
-0.5.0-beta.11 is a beta candidate. Automated simulation is supplemented by required live mailbox, multiplayer, party/cast/arrival and UI checks. The commission model still requires platform-policy clarification. No claim of public acceptance, complete spell coverage, server-certified delivery or permanent global creator ownership is made. The addon is independent of Uber Technologies, Blizzard and CurseForge.
+0.5.0-beta.13 is a beta candidate. Automated simulation is supplemented by required live mailbox, multiplayer, party/cast/arrival and UI checks. The commission model still requires platform-policy clarification. No claim of public acceptance, complete spell coverage, server-certified delivery or permanent global creator ownership is made. The addon is independent of Uber Technologies, Blizzard and CurseForge.
 
 ## Network activity and shared sessions
 
