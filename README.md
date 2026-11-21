@@ -2,8 +2,6 @@
 
 Warlock summons, Mage portals, & Server Phasing all in one World of Warcraft addon: reviewed provider cards, itemized prices, advance reservations, setup status, map positions and receipt/delivery timelines.
 
-Current source: **0.5.0-beta.11**, targeting **Forever / Interface 16001**. Open **`/uber`** in game. This is a beta with live-client checks still required.
-
 ## Features
 
 - Creator/provider administration, manual driver review, hours, managed rates and moderation controls.
