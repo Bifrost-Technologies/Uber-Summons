@@ -7,10 +7,6 @@ print("Metadata:")
 print(json.dumps(metadata, indent=2))
 print("Upload URL:", f"https://www.curseforge.com/api/projects/{project}/upload-file")
 print("===============================")
-print("CF_API_TOKEN Present:", bool(token))
-print("CF_PROJECT_ID:", repr(project))
-print("CF_GAME_VERSION_IDS:", repr(ids))
-print("===============================")
 
 request = urllib.request.Request(
     f"https://www.curseforge.com/api/projects/{project}/upload-file",
@@ -32,6 +28,10 @@ except urllib.error.HTTPError as error:
     print("\n=== CurseForge Error ===")
     print("HTTP Status:", error.code)
     print("Reason:", error.reason)
+    print("CF_API_TOKEN Present:", bool(token))
+    print("CF_PROJECT_ID:", repr(project))
+    print("CF_GAME_VERSION_IDS:", repr(ids))
+    print("===============================")
 
     try:
         response_body = error.read().decode("utf-8", errors="replace")
