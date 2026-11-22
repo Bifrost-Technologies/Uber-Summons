@@ -47,3 +47,7 @@ The directory defaults to My realm + faction; its button toggles All known netwo
 
 Regression coverage: uber-protocol exercises 42 faction/realm/replay/channel/flood cases; uber-public-private loads the final protocol and models the production four-packet/second dispatch cadence for paged-roster tests. The tracking panel tolerates missing ETA in incomplete cached orders. Full affected suites and native multiplayer acceptance are recorded separately; offline passes do not establish gameplay delivery.
 
+
+## Stable version preparation — 0.5.0
+Both TOCs now declare 0.5.0. Stable publication requires tag v0.5.0: scripts/release.py marks untagged branch uploads alpha, beta-tagged versions beta, and plain version tags release. The workflow likewise marks branch GitHub downloads prerelease. Keep branch artifacts nonstable; renaming a local TOC does not publish or promote any remote file. Uber has no in-game available-version notifier. Addon-manager matching, release channel, compatible game version and moderation can affect available updates; the specific owner's manager issue remains unconfirmed. GitHub/tag/CurseForge publication still requires explicit owner approval. Native gameplay acceptance remains as documented above.
+

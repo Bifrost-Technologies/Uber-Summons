@@ -83,3 +83,7 @@ Regression coverage: uber-protocol exercises 42 faction/realm/replay/channel/flo
 ## Blue theme — 0.5.0-beta.16
 Navy window backgrounds, blue cards/borders, azure headings and online-provider accents replace the teal styling. Keep warning, connection and notification colors semantic. This is a visual-only change; protocol, booking rules and saved settings remain unchanged. Verify rendering in game after /reload; offline UI tests do not establish visual acceptance.
 
+
+## Stable version preparation — 0.5.0
+Both TOCs now declare 0.5.0. Stable publication requires tag v0.5.0: scripts/release.py marks untagged branch uploads alpha, beta-tagged versions beta, and plain version tags release. The workflow likewise marks branch GitHub downloads prerelease. Keep branch artifacts nonstable; renaming a local TOC does not publish or promote any remote file. Uber has no in-game available-version notifier. Addon-manager matching, release channel, compatible game version and moderation can affect available updates; the specific owner's manager issue remains unconfirmed. GitHub/tag/CurseForge publication still requires explicit owner approval. Native gameplay acceptance remains as documented above.
+
