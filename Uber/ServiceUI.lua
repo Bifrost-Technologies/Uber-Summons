@@ -10,7 +10,7 @@ function U:ShowBilling()
  if not self.billingFrame then
   local f=CreateFrame("Frame","UberBilling",UIParent,"BackdropTemplate");self.billingFrame=f
   f:SetPoint("CENTER");f:SetSize(780,650);f:SetFrameStrata("FULLSCREEN_DIALOG");f:SetClampedToScreen(true)
-  f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.035,.05,.08,.99)
+  f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.025,.055,.12,.99)
   label(f,"UBER — PRICES, PRIORITY & PAYMENT NOTICES",24,-22,700,28)
   button(f,"X",728,-14,30,function()f:Hide()end)
   self.priceInfo=label(f,"",24,-62,730,54)

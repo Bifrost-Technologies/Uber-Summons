@@ -178,7 +178,7 @@ function U:ShowNetwork()
  if not self.db then return end;self:StatsDB()
  if not self.networkFrame then
   local f=CreateFrame('Frame','UberNetworkPanel',UIParent,'BackdropTemplate');self.networkFrame=f;f:SetSize(920,680);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.035,.055,1)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.015,.035,.085,1)
   label(f,'UBER / SUMMONING NETWORK & OPEN SESSIONS',24,-22,820,32)
   button(f,'X',860,-18,34,function()f:Hide()end);table.insert(UISpecialFrames,'UberNetworkPanel')
   self.networkSummary=label(f,'',24,-66,870,40)

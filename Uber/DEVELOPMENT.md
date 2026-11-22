@@ -79,3 +79,7 @@ The directory defaults to My realm + faction; its button toggles All known netwo
 
 Regression coverage: uber-protocol exercises 42 faction/realm/replay/channel/flood cases; uber-public-private loads the final protocol and models the production four-packet/second dispatch cadence for paged-roster tests. The tracking panel tolerates missing ETA in incomplete cached orders. Full affected suites and native multiplayer acceptance are recorded separately; offline passes do not establish gameplay delivery.
 
+
+## Blue theme — 0.5.0-beta.16
+Navy window backgrounds, blue cards/borders, azure headings and online-provider accents replace the teal styling. Keep warning, connection and notification colors semantic. This is a visual-only change; protocol, booking rules and saved settings remain unchanged. Verify rendering in game after /reload; offline UI tests do not establish visual acceptance.
+

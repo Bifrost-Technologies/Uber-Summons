@@ -33,7 +33,7 @@ end
 function H:Show()
  if not self.frame then
   local f=CreateFrame('Frame','SummonClickHelpers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(550,300);f:SetPoint('CENTER');f:SetClampedToScreen(true);f:EnableMouse(true);f:SetFrameStrata('DIALOG')
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.035,.05,.075,.98)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.025,.055,.12,.98)
   local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOPLEFT',20,-20);title:SetText('SUMMON CLICK HELPERS');title:SetTextColor(.2,.8,1)
   local scope=button(f,'Scope: '..db().scope,-55,function()H:Stop();db().scope=db().scope=='TOWN'and 'REGION'or 'TOWN';H.scope:SetText('Scope: '..db().scope)end);self.scope=scope
   self.edit=CreateFrame('EditBox',nil,f,'InputBoxTemplate');self.edit:SetSize(500,28);self.edit:SetPoint('TOPLEFT',20,-100);self.edit:SetAutoFocus(false);self.edit:SetMaxLetters(255);self.edit:SetText(db().text)

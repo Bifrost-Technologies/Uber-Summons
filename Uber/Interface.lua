@@ -1,9 +1,9 @@
 local U=Uber
-local colors={bg={.025,.035,.055},card={.055,.075,.11},accent={.35,.85,.72}}
+local colors={bg={.015,.035,.085},card={.035,.075,.15},accent={.30,.65,1},border={.16,.36,.65}}
 local function panel(parent,w,h,x,y)
     local f=CreateFrame("Frame",nil,parent,"BackdropTemplate");f:SetSize(w,h);f:SetPoint("TOPLEFT",x,y)
     f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=12})
-    f:SetBackdropColor(unpack(colors.card));return f
+    f:SetBackdropColor(unpack(colors.card));f:SetBackdropBorderColor(unpack(colors.border));return f
 end
 local function label(f,text,x,y,w,h,big)
     local t=f:CreateFontString(nil,"OVERLAY",big and "GameFontNormalLarge"or "GameFontHighlightSmall")
@@ -40,7 +40,7 @@ function U:Show()
     if not self.frame then
         local f=CreateFrame("Frame","UberPanel",UIParent,"BackdropTemplate");self.frame=f
         f:SetSize(940,700);f:SetPoint("CENTER");f:SetFrameStrata("DIALOG");f:SetClampedToScreen(true)
-        f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(unpack(colors.bg))
+        f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(unpack(colors.bg));f:SetBackdropBorderColor(unpack(colors.border))
         f:EnableMouse(true);f:SetMovable(true);f:RegisterForDrag("LeftButton");f:SetScript("OnDragStart",f.StartMoving);f:SetScript("OnDragStop",f.StopMovingOrSizing)
         label(f,"UBER",28,-22,180,32,true):SetTextColor(unpack(colors.accent))
         label(f,"Summons, portals and your next adventure.",180,-27,345)

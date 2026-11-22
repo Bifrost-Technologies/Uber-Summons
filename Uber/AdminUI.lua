@@ -11,8 +11,8 @@ local function edit(f,text,x,y,w,max)
 end
 local function modal(name,w,h,title)
  local f=CreateFrame("Frame",name,UIParent,"BackdropTemplate");f:SetSize(w,h);f:SetPoint("CENTER");f:SetFrameStrata("FULLSCREEN_DIALOG");f:SetClampedToScreen(true);f:EnableMouse(true)
- f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.025,.035,.055,1)
- label(f,title,24,-20,w-90,32,true):SetTextColor(.35,.85,.72);button(f,"X",w-52,-14,30,function()f:Hide()end)
+ f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.015,.035,.085,1)
+ label(f,title,24,-20,w-90,32,true):SetTextColor(.30,.65,1);button(f,"X",w-52,-14,30,function()f:Hide()end)
  f:SetMovable(true);f:RegisterForDrag("LeftButton");f:SetScript("OnDragStart",f.StartMoving);f:SetScript("OnDragStop",f.StopMovingOrSizing)
  table.insert(UISpecialFrames,name);return f
 end
@@ -58,7 +58,7 @@ function U:Show()
   -- Replace the old configurable-dispatcher controls with a single fixed-founder flow.
   for _,child in ipairs({v:GetChildren()})do child:Hide()end
   for _,region in ipairs({v:GetRegions()})do region:Hide()end
-  label(v,"Become an Uber provider",12,-4,850,38,true):SetTextColor(.35,.85,.72)
+  label(v,"Become an Uber provider",12,-4,850,38,true):SetTextColor(.30,.65,1)
   label(v,"Creator & reviewer: "..self.FOUNDER..". Mage and Warlock applications go to his in-game mailbox for manual review. Open a mailbox to prepare your draft, then use WoW's Send button.",12,-54,850,68)
   label(v,"Experience, spells, helpers, supplies, usual hours and timezone",12,-146,850)
   self.application=edit(v,"",12,-184,850,160)

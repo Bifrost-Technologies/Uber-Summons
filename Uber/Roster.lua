@@ -22,7 +22,7 @@ function U:DriverMenu(who,anchor)
     if not self.menu then
         local f=CreateFrame("Frame",nil,self.frame,"BackdropTemplate");self.menu=f
         f:SetSize(240,186);f:SetFrameStrata("TOOLTIP");f:SetClampedToScreen(true);f:EnableMouse(true)
-        f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=12});f:SetBackdropColor(.04,.06,.09,1)
+        f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=12});f:SetBackdropColor(.025,.055,.12,1)
         for i,item in ipairs({{"Request summons","request"},{"Add friend","friend"},{"Ask to join guild","guild"},{"Rate completed service","rate"},{"Close",false}})do
             local action=item[2];local b=CreateFrame("Button",nil,f,"UIPanelButtonTemplate");b:SetPoint("TOPLEFT",10,-10-(i-1)*34);b:SetSize(220,28);b:SetText(item[1])
             b:SetScript("OnClick",function()f:Hide();if action then self:DriverAction(self.menuName,action)end end)
@@ -43,7 +43,7 @@ function U:Show()
         for i=1,4 do
             local row=CreateFrame("Button",nil,f,"BackdropTemplate");self.rosterRows[i]=row
             row:SetPoint("TOPLEFT",12,-94-(i-1)*92);row:SetSize(866,88);row:RegisterForClicks("LeftButtonUp","RightButtonUp")
-            row:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=10});row:SetBackdropColor(.055,.075,.11,1)
+            row:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=10});row:SetBackdropColor(.035,.075,.15,1)
             row.icon=row:CreateTexture(nil,"ARTWORK");row.icon:SetPoint("TOPLEFT",12,-11);row.icon:SetSize(54,54)
             row.title=row:CreateFontString(nil,"OVERLAY","GameFontNormalLarge");row.title:SetPoint("TOPLEFT",84,-14);row.title:SetSize(510,24);row.title:SetJustifyH("LEFT")
             row.info=row:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");row.info:SetPoint("TOPLEFT",84,-36);row.info:SetSize(510,46);row.info:SetJustifyH("LEFT")
@@ -80,9 +80,9 @@ function U:Refresh()
             if self.ProviderLive then
                 local live,available,presence=self:ProviderPresence(who);local policy=self:ProviderPolicy(who)
                 if row.order then row.order:SetText(available and "Order Uber"or "Reserve ahead")end
-                row.title:SetText((live and "|cff59dbc0[ONLINE]|r "or "|cff999999[UNAVAILABLE]|r ")..(self:NativeTranquilityMember(who)and "|cffffd166"..who.."|r · Tranquility"or who)..(self.NameKey(who)==self.NameKey(self.FOUNDER)and "  · Creator"or ""))
+                row.title:SetText((live and "|cff60b8ff[ONLINE]|r "or "|cff999999[UNAVAILABLE]|r ")..(self:NativeTranquilityMember(who)and "|cffffd166"..who.."|r · Tranquility"or who)..(self.NameKey(who)==self.NameKey(self.FOUNDER)and "  · Creator"or ""))
                 row:SetAlpha(live and 1 or .72)
-                row:SetBackdropColor(live and .045 or .035,live and .12 or .045,live and .13 or .06,1)
+                row:SetBackdropColor(live and .035 or .025,live and .10 or .045,live and .21 or .09,1)
                 local base=policy.standard and policy.standard+self:PortalCost(who)or peer and peer.standard
                 local price=base and ("From "..self:Money(base).." · Priority +"..self:Money(policy.priority or peer and peer.priority or 0))or "Quote required"
                 local hours=type(policy.hours)=="string"and policy.hours or "Hours not published"
@@ -115,7 +115,7 @@ function U:ShowStars(who)
  local id,latest=nil,0;for key,r in pairs(self.db.outbox)do if self.NameKey(r.provider)==self.NameKey(who)and r.deliveredAt and not r.stars and r.deliveredAt>latest then id,latest=key,r.deliveredAt end end
  if not id then self:Notice('Complete a corroborated Uber order before rating. One star-only review per order.');return false end
  if not self.ratingFrame then
-  local f=CreateFrame('Frame',nil,UIParent,'BackdropTemplate');self.ratingFrame=f;f:SetSize(480,160);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:EnableMouse(true);f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.04,.06,.09,1)
+  local f=CreateFrame('Frame',nil,UIParent,'BackdropTemplate');self.ratingFrame=f;f:SetSize(480,160);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:EnableMouse(true);f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.055,.12,1)
   local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOP',0,-20);title:SetText('Rate your completed service · 5 is best')
   for i=1,5 do local stars=i;local b=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');b:SetSize(76,30);b:SetPoint('TOPLEFT',24+(i-1)*87,-66);b:SetText(i..' / 5');b:SetScript('OnClick',function()if self:RateDeliveredOrder(self.ratingOrder,stars)then f:Hide();self:Notice('Star rating sent. Thank you!')end end)end
   local close=CreateFrame('Button',nil,f,'UIPanelCloseButton');close:SetPoint('TOPRIGHT')

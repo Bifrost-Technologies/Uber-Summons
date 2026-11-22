@@ -98,7 +98,7 @@ local function button(f,text,y,fn)local b=CreateFrame('Button',nil,f,'UIPanelBut
 function P:Show()
  if not self.frame then
   local f=CreateFrame('Frame','UberPhaseKeepers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(565,530);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.035,.05,.075,.98)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.025,.055,.12,.98)
   local t=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');t:SetPoint('TOPLEFT',20,-20);t:SetText('UBER / PHASE KEEPERS');t:SetTextColor(.2,.8,1)
   self.hostButton=button(f,'Host OFF — click to host',-55,function()
    if not self.hosting and(not safe()or not alone())then U:Notice('Host while solo, outdoors, on the ground and out of combat.');return end

@@ -56,7 +56,7 @@ function U:ShowMailbox()
  self:PlayFeedback("mail")
  if not self.mailFrame then
   local f=CreateFrame('Frame','UberMailbox',UIParent,'BackdropTemplate');self.mailFrame=f;f:SetSize(740,640);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true);f:SetMovable(true);f:RegisterForDrag('LeftButton');f:SetScript('OnDragStart',f.StartMoving);f:SetScript('OnDragStop',f.StopMovingOrSizing)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.035,.055,.98)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.015,.035,.085,.98)
   local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOPLEFT',25,-22);title:SetText('UBER / NOTIFICATION MAILBOX')
   self.mailSummary=f:CreateFontString(nil,'OVERLAY','GameFontHighlightSmall');self.mailSummary:SetPoint('TOPLEFT',25,-56)
   button(f,'X',690,-15,30,25,function()f:Hide()end);table.insert(UISpecialFrames,'UberMailbox')
@@ -126,7 +126,7 @@ function U:ShowWelcome(force)
  if not self.db or(self:NotificationDB().welcomeSeen and not force)then return false end
  if not self.welcomeFrame then
   local f=CreateFrame('Frame','UberWelcome',UIParent,'BackdropTemplate');self.welcomeFrame=f;f:SetSize(768,512);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=18});f:SetBackdropColor(.02,.025,.06,1)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=18});f:SetBackdropColor(.015,.03,.09,1)
   local art=f:CreateTexture(nil,'BACKGROUND');art:SetAllPoints();art:SetTexture('Interface\\AddOns\\Uber\\UberSplash');art:SetTexCoord(.21875,.78125,.125,.875)
   local shade=f:CreateTexture(nil,'ARTWORK');shade:SetAllPoints();shade:SetTexture('Interface\\Buttons\\WHITE8X8');shade:SetVertexColor(.015,.02,.055);shade:SetAlpha(.34)
   local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalHuge');title:SetPoint('TOP',0,-30);title:SetText('UBER SUMMONS');title:SetTextColor(.75,.95,1)
