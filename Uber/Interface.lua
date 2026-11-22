@@ -131,7 +131,7 @@ function U:Refresh()
     if not self.frame or not self.frame:IsShown()then return end
     self:DriverDB();self.footer:SetText(self.notice or "Free, player-operated summons coordination. No automatic casting. /uber to reopen.")
     local o=self:Current();local fresh=self:IsFresh(o);local stage=o and o.status
-    self.tracking:SetText(o and ((self.statusLabels[stage]or stage).."\n"..o.destination.."  |  ETA "..math.max(0,math.ceil((o.eta-GetServerTime())/60)).." min  |  "..(fresh and "Updated "..math.max(0,GetServerTime()-o.updated).."s ago"or "Offline / stale — refresh"))or "No active camp yet\nSend a request or refresh your selected driver.")
+    self.tracking:SetText(o and ((self.statusLabels[stage]or stage).."\n"..o.destination.."  |  ETA "..math.max(0,math.ceil(((tonumber(o.eta)or GetServerTime())-GetServerTime())/60)).." min  |  "..(fresh and "Updated "..math.max(0,GetServerTime()-o.updated).."s ago"or "Offline / stale — refresh"))or "No active camp yet\nSend a request or refresh your selected driver.")
     local latest
     for _,r in pairs(self.db.outbox)do if r.provider==self.db.provider and (not latest or (r.at or 0)>(latest.at or 0))then latest=r end end
     if latest then self.tracking:SetText((self.tracking:GetText() or "").."\nYour request: "..latest.status)end

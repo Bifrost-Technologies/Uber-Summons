@@ -10,6 +10,7 @@ local function clean(v,n)return type(v)=="string"and #v>0 and #v<=n and not v:fi
 local function integer(v,max)local n=tonumber(v);return n and n==n and n>=0 and n<=max and n%1==0 and n end
 U.NameKey=key
 function U:Network()
+ if self.ScopedNetworkSettings then return self:ScopedNetworkSettings()end
  self.peers=self.peers or {};self.subscribers=self.subscribers or {}
  self.db.realmServices=self.db.realmServices or {}
  local id=realm();self.db.realmServices[id]=self.db.realmServices[id]or {house="Bifrost Titan",profiles={}}
@@ -34,7 +35,7 @@ function U:SavePrices(standard,priority,house)
  if not a or not b or not clean(house,60)or house:find("[/\\]")then return false end
  local p,id=self:Network()
  if house~=p.house and not self:IsDispatcher()then return false end
- p.standard,p.priority=a,b;self.db.realmServices[id].house=house;p.house=house
+ p.standard,p.priority=a,b;self.db.realmServices[self.networkSettingsKey or id].house=house;p.house=house
  if self.online then self:Advertise()end
  return true
 end
@@ -103,7 +104,7 @@ function U:Receive(text,sender,channel)
   if self.subscribers[sender]or total<100 then self.subscribers[sender]=now()end
   self:Advertise(sender);if self.online and self.db.active then self:Publish(sender)end;return
  elseif p[1]=="H3"then
-  if #p~=7 or p[2]~=id or not self:Approved(sender)or (p[3]~="0"and p[3]~="1")then return end
+  if #p~=7 or not self:Approved(sender)or (self.ScopeRealmAllowed and not self:ScopeRealmAllowed(sender,p[2],channel))or(not self.ScopeRealmAllowed and p[2]~=id)or (p[3]~="0"and p[3]~="1")then return end
   local base,priority,at=integer(p[4],100000000),integer(p[5],100000000),integer(p[7],9999999999)
   if not base or not priority or not at or at>now()+10 or at<now()-90 or (p[6]~="AVAILABLE"and p[6]~="OFFLINE"and not self.statusLabels[p[6]])then return end
   if base<self:PortalCost(sender)then return end
