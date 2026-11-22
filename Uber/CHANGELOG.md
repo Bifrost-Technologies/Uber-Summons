@@ -1,3 +1,7 @@
+## 0.5.0-beta.14
+
+Stop background send-failure chat bursts; recheck peer reachability at dispatch; back off failed endpoints for 30 seconds and discard their queued background traffic. Keep rider request/receipt failures visible with result details and add bounded /uber network diagnostics including native incoming-query provenance. No change to private admin authority.
+
 ## 0.5.0-beta.13
 
 Preserve offline reservations using cached same-realm/faction scope while requiring fresh scope for immediate rides and queued delivery. Stop offline probes when choosing an unavailable provider; bound the recent-peer cache; repair malformed saved root tables. Public administration/census tools remain excluded. Full-runtime multi-client simulations pass with the creator disconnected. Native mailbox/multiplayer smoke testing is still pending.
@@ -131,3 +135,4 @@ Realm/faction metadata expires after 90 seconds. Region helper outreach accepts 
 
 - Introduced standalone summons requests, a saved inbox, active camps and customer joins.
 - Added integration entry points for the guild addons.
+

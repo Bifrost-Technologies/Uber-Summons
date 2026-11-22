@@ -23,10 +23,15 @@ function U:PeerReachable(who)
  end
  return false
 end
-local background={HELLO3=true,H3=true,LOCATION4=true,SCOPE1=true,CAP7=true,KEEP2=true,KEEPQ1=true,ADMINPING4=true,ROSTER=true,ROSTER4=true,ME7=true,ACK7=true,LEAVE7=true,EVIDENCE4=true}
+function U:CanDispatchPacket(p)
+ local kind=p.text:match('^([^|]+)')
+ if not self:IsBackgroundPacket(kind)then return true end
+ if self:NetworkBackoff(p.channel,p.target)then return false end
+ return p.channel~='WHISPER'or p.manualProbe or self:PeerReachable(p.target)
+end
 local send=U.Send
 function U:Send(parts,target,channel)
- if (channel==nil or channel=='WHISPER')and background[parts[1]]and not self.manualProbe and not self:PeerReachable(target)then return false end
+ if (channel==nil or channel=='WHISPER')and self:IsBackgroundPacket(parts[1])and not self.manualProbe and not self:PeerReachable(target)then return false end
  return send(self,parts,target,channel)
 end
 function U:DiscoverDrivers(force)
@@ -59,4 +64,16 @@ function U:Receive(text,sender,channel)
   return receive(self,'HELLO3|'..id,sender,'WHISPER')
  end
  return receive(self,text,sender,channel)
+end
+-- Preserve native sender/type provenance for queued replies, without saving payloads.
+local receiveWithDiscovery=U.Receive
+function U:Receive(text,sender,channel)
+ local previous=self.receiveContext
+ if type(text)=='string'and #text<=240 and type(sender)=='string'and #sender<=100 then
+  self.receiveContext={sender=sender,kind=text:match('^([A-Z0-9_]+)')or '?',channel=channel}
+ end
+ local ok,a,b=pcall(receiveWithDiscovery,self,text,sender,channel)
+ self.receiveContext=previous
+ if not ok then error(a)end
+ return a,b
 end

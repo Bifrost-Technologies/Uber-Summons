@@ -26,23 +26,62 @@ function U:Init()
     self.transportAvailable=register and pcall(register,self.prefix)or false
 end
 function U:ID()self.db.serial=self.db.serial+1;return tostring(now()).."-"..self.db.serial end
+local background={HELLO3=true,H3=true,LOCATION4=true,SCOPE1=true,CAP7=true,KEEP2=true,KEEPQ1=true,ADMINPING4=true,ADMINHERE4=true,ROSTER=true,ROSTER4=true,ME7=true,ACK7=true,LEAVE7=true,EVIDENCE4=true,EVIDENCEACK4=true,DISCOVER5=true,Q=true,S=true,ADMIN4=true}
+function U:IsBackgroundPacket(kind)return background[kind]==true end
+function U:NetworkBackoff(channel,target)
+    for _,e in ipairs(self.networkFailures or {})do
+        if e.channel==channel and e.target==(target or '-')and now()<(e.retryAt or 0)then return true end
+    end
+    return false
+end
+function U:RecordNetworkFailure(p,result)
+    self.networkFailures=self.networkFailures or {}
+    local kind=p.text:match('^([^|]+)')or '?'
+    local reason=type(result)=='string'and result:sub(1,160)or tostring(result)
+    if type(result)=='number'and Enum and Enum.SendAddonMessageResult then
+        for label,value in pairs(Enum.SendAddonMessageResult)do if value==result then reason=label..' ('..result..')';break end end
+    end
+    local e={at=now(),kind=kind,target=p.target or '-',channel=p.channel,result=reason,retryAt=now()+30,trigger=p.trigger,count=1}
+    for i,old in ipairs(self.networkFailures)do
+        if old.channel==e.channel and old.target==e.target and old.kind==kind then e.count=(old.count or 1)+1;table.remove(self.networkFailures,i);break end
+    end
+    table.insert(self.networkFailures,1,e);if #self.networkFailures>50 then table.remove(self.networkFailures)end
+    -- Drop only background traffic to the failed endpoint, never ride requests/receipts.
+    for i=#self.queue,1,-1 do local queued=self.queue[i]
+        if queued.channel==p.channel and queued.target==p.target and self:IsBackgroundPacket(queued.text:match('^([^|]+)'))then table.remove(self.queue,i)end
+    end
+    if not self:IsBackgroundPacket(kind)or p.manualProbe then
+        if not self.lastNetworkWarning or now()-self.lastNetworkWarning>=30 then
+            self.lastNetworkWarning=now()
+            tell(('Network send failed: %s to %s via %s (%s). Delivery unconfirmed; /uber network shows details.'):format(kind,e.target,e.channel,reason))
+        end
+    end
+end
+function U:NetworkDiagnostics()
+    local failures=self.networkFailures or {}
+    if #failures==0 then tell('No network send failures recorded since login/reload.');return end
+    tell('Recent send failures (metadata only; not evidence of a ride request):')
+    for i=1,math.min(5,#failures)do local e=failures[i]
+        local trigger=e.trigger and ('; triggered by '..e.trigger.sender..' / '..e.trigger.kind)or '; local/background trigger'
+        tell(('%ds ago: %s -> %s [%s], %s; failures %d%s'):format(math.max(0,now()-e.at),e.kind,e.target,e.channel,e.result,e.count,trigger))
+    end
+end
 function U:Send(parts,target,channel)
     local text=table.concat(parts,"|")
+    channel=channel or 'WHISPER'
+    if self:IsBackgroundPacket(parts[1])and self:NetworkBackoff(channel,target)then return false end
     if #text>240 or #self.queue>=100 then tell("Network queue full or message too long.");return false end
-    self.queue[#self.queue+1]={text=text,target=target,channel=channel or "WHISPER"};return true
+    self.queue[#self.queue+1]={text=text,target=target,channel=channel,manualProbe=self.manualProbe==true,trigger=self.receiveContext};return true
 end
 function U:Tick()
     if not self.db then return end
     local p=table.remove(self.queue,1)
-    if p then
+    if p and (not self.CanDispatchPacket or self:CanDispatchPacket(p))then
         local send=C_ChatInfo and C_ChatInfo.SendAddonMessage or SendAddonMessage
-        if send then
-            local ok,result=pcall(send,self.prefix,p.text,p.channel,p.target)
-            if not ok or result==false or type(result)=="number" and result~=0 then
-                -- Offline discovery peers are normal; do not turn them into visible chat spam.
-                if not p.text:match("^HELLO3|")and p.text~="ADMINPING4"and p.text~="ROSTER"and not p.text:match("^ME7|")and not p.text:match("^ACK7|")and p.text~="LEAVE7"then tell("Delivery failed; refresh/retry when the recipient is online.")end
-            end
-        end
+        local ok,result=false,'SendAddonMessage unavailable'
+        if send then ok,result=pcall(send,self.prefix,p.text,p.channel,p.target)end
+        local success=Enum and Enum.SendAddonMessageResult and Enum.SendAddonMessageResult.Success or 0
+        if not ok or result==false or type(result)=='number'and result~=success then self:RecordNetworkFailure(p,result)end
     end
     if self.online and self.db.active and self.db.active.status~="COMPLETE" and self.db.active.status~="CANCELLED" and now()-(self.announced or 0)>=30 and #self.queue<50 then self:Publish()end
     if now()~=(self.refreshedAt or 0)then self.refreshedAt=now();self:Refresh()end
@@ -135,4 +174,4 @@ frame:SetScript("OnEvent",function(_,event,...)
 end)
 local elapsed=0
 frame:SetScript("OnUpdate",function(_,dt)elapsed=elapsed+dt;if elapsed>=0.25 then elapsed=0;U:Tick()end end)
-SLASH_UBER1="/uber";SlashCmdList.UBER=function()U:Show()end
+SLASH_UBER1="/uber";SlashCmdList.UBER=function(message)if type(message)=='string'and message:match('^%s*network%s*$')then U:NetworkDiagnostics()else U:Show()end end

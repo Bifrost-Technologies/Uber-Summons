@@ -2,7 +2,7 @@
 
 One addon for Warlock summons, Mage portals, customers and reviewed providers. Open **/uber**. Targets Forever Interface 16001; standalone, MIT, no required addon or executable dependency.
 
-Current source: **0.5.0-beta.13**. This is a beta with live-client checks still required.
+Current source: **0.5.0-beta.14**. This is a beta with live-client checks still required.
 
 ## Start here
 
@@ -62,3 +62,14 @@ Beta 7 keeper availability: local per-character invitation attempts are limited 
 Beta 8: approved Warlock/Mage drivers open service at login by default. Driver desk offers Remember service ON/OFF after restart; enable it while closed to remain closed on the next login. Choices are per character/realm. Explicit OFF remains respected for the current session; disabling Remember restores the default-open behavior on the next login. Old active camps are not resumed by startup availability. Phase keeper hosting remains a separate opt-in feature.
 
 Feature audit (2026-11-20): driver realm/faction metadata now expires after 90 seconds rather than trusting an old saved scope indefinitely. Region helper outreach includes town-area rows only after the prepared native WHO query was observed; otherwise it explicitly falls back to exact-area matches. Exact town is an exact reported area, not physical proximity. Layer labels are manual, keeper budgets count local invitation attempts, and native cross-realm/global discovery is not implemented.
+
+## Network diagnostics (0.5.0-beta.14)
+
+Repeated discovery/status replies previously printed the generic delivery warning
+for background failures. These now stay out of chat, with a 30-second failed-endpoint
+backoff and dispatch-time reachability check. Ride requests/receipts are retained;
+actionable failures name the packet, endpoint and native send result, at most once
+per 30 seconds. Run `/uber network` to see up to five recent metadata-only failures
+and any native sender/query that triggered a reply. This is not evidence of an
+attack or a new ride; check the incoming requests list for actual rider requests.
+Records are bounded to 50 and reset on reload. A send success is not delivery proof.
