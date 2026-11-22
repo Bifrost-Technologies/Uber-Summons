@@ -45,8 +45,8 @@ function U:Show()
             row:SetPoint("TOPLEFT",12,-94-(i-1)*92);row:SetSize(866,88);row:RegisterForClicks("LeftButtonUp","RightButtonUp")
             row:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=10});row:SetBackdropColor(.035,.075,.15,1)
             row.icon=row:CreateTexture(nil,"ARTWORK");row.icon:SetPoint("TOPLEFT",12,-11);row.icon:SetSize(54,54)
-            row.title=row:CreateFontString(nil,"OVERLAY","GameFontNormalLarge");row.title:SetPoint("TOPLEFT",84,-14);row.title:SetSize(510,24);row.title:SetJustifyH("LEFT")
-            row.info=row:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");row.info:SetPoint("TOPLEFT",84,-36);row.info:SetSize(510,46);row.info:SetJustifyH("LEFT")
+            row.title=row:CreateFontString(nil,"OVERLAY","GameFontNormalLarge");row.title:SetPoint("TOPLEFT",84,-14);row.title:SetSize(556,24);row.title:SetJustifyH("LEFT")
+            row.info=row:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");row.info:SetPoint("TOPLEFT",84,-36);row.info:SetSize(556,46);row.info:SetJustifyH("LEFT")
             local order=CreateFrame("Button",nil,row,"UIPanelButtonTemplate");row.order=order;order:SetPoint("TOPRIGHT",-48,-22);order:SetSize(170,32);order:SetText("Order Uber")
             order:SetScript("OnClick",function()if row.driver then self:SelectDriver(row.driver)end end)
             local tools=CreateFrame("Button",nil,row,"UIPanelButtonTemplate");tools:SetPoint("TOPRIGHT",-10,-22);tools:SetSize(30,32);tools:SetText("...")
@@ -115,9 +115,9 @@ function U:ShowStars(who)
  local id,latest=nil,0;for key,r in pairs(self.db.outbox)do if self.NameKey(r.provider)==self.NameKey(who)and r.deliveredAt and not r.stars and r.deliveredAt>latest then id,latest=key,r.deliveredAt end end
  if not id then self:Notice('Complete a corroborated Uber order before rating. One star-only review per order.');return false end
  if not self.ratingFrame then
-  local f=CreateFrame('Frame',nil,UIParent,'BackdropTemplate');self.ratingFrame=f;f:SetSize(480,160);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:EnableMouse(true);f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.055,.12,1)
+  local f=CreateFrame('Frame',nil,UIParent,'BackdropTemplate');self.ratingFrame=f;f:SetSize(480,160);f:SetPoint('CENTER');f:SetFrameStrata('FULLSCREEN_DIALOG');f:SetToplevel(true);f:SetClampedToScreen(true);f:EnableMouse(true);f:SetMovable(true);f:RegisterForDrag('LeftButton');f:SetScript('OnDragStart',f.StartMoving);f:SetScript('OnDragStop',f.StopMovingOrSizing);f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.025,.055,.12,1);f:SetBackdropBorderColor(.16,.36,.65)
   local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOP',0,-20);title:SetText('Rate your completed service · 5 is best')
   for i=1,5 do local stars=i;local b=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');b:SetSize(76,30);b:SetPoint('TOPLEFT',24+(i-1)*87,-66);b:SetText(i..' / 5');b:SetScript('OnClick',function()if self:RateDeliveredOrder(self.ratingOrder,stars)then f:Hide();self:Notice('Star rating sent. Thank you!')end end)end
   local close=CreateFrame('Button',nil,f,'UIPanelCloseButton');close:SetPoint('TOPRIGHT')
- end;self.ratingOrder=id;self.ratingFrame:Show();return true
+ end;self.ratingOrder=id;self.ratingFrame:Show();self.ratingFrame:Raise();return true
 end

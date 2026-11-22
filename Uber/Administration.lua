@@ -1,11 +1,27 @@
 local U=Uber
 U.FOUNDER="Bîfrost Titan"
+U.SEEDED_DRIVERS={
+ {name=U.FOUNDER,class="WARLOCK",founder=true},
+ {name="Krazyito Isamage",class="MAGE",ruleset="Normal",faction="Horde",seeded=true},
+}
 local function now()return GetServerTime()end
 local function me()return GetUnitName("player",true)end
 local function key(n)return U.NameKey(n)end
 local function same(a,b)return key(a)==key(b)end
 local function clean(s,n)return type(s)=="string"and #s>0 and #s<=n and not s:find("[%c|]")end
 local function integer(s,max)local n=tonumber(s);return n and n==n and n>=0 and n<=max and n%1==0 and n end
+function U:SeededDriver(who)
+ if type(who)~="string"or who==""then return nil end
+ for _,d in ipairs(self.SEEDED_DRIVERS)do
+  if same(who,d.name)then return d end
+  local base,suffix=who:match("^([^-]+)%-(.+)$")
+  if base and base:lower()==d.name:lower()and not d.name:find("-",1,true)then
+   local rs=self.NormalizeRuleset and self:NormalizeRuleset(suffix)
+   if not d.ruleset or not rs or rs==d.ruleset then return d end
+  end
+ end
+ return nil
+end
 function U:Audit(kind,subject,detail,source)
  self.db.audit=self.db.audit or {};local a=self.db.audit
  a[#a+1]={at=now(),kind=kind,subject=subject or "",detail=detail or "",source=source or me()}
@@ -15,15 +31,36 @@ local driverDB=U.DriverDB
 function U:DriverDB()
  driverDB(self);self.db.dispatcher=self.FOUNDER
  self.db.providerPolicies=type(self.db.providerPolicies)=='table'and self.db.providerPolicies or {};self.db.audit=type(self.db.audit)=='table'and self.db.audit or {}
- local k=key(self.FOUNDER)
- local r=self.db.drivers[k]
- if not r or not r.approved or r.class~="WARLOCK"or r.authority~=self.FOUNDER then self.db.drivers[k]={name=self.FOUNDER,class="WARLOCK",approved=true,authority=self.FOUNDER,at=0,founder=true}end
+ for _,d in ipairs(self.SEEDED_DRIVERS)do
+  local k=key(d.name)
+  local ghost=d.name:lower().."-"
+  if k~=ghost then self.db.drivers[ghost]=nil end
+  local r=self.db.drivers[k]
+  if type(r)~="table"or not r.approved or r.class~=d.class or r.authority~=self.FOUNDER then
+   self.db.drivers[k]={name=d.name,class=d.class,approved=true,authority=self.FOUNDER,at=(type(r)=="table"and r.at)or 0,founder=d.founder,seeded=d.seeded,ruleset=d.ruleset,faction=d.faction}
+  else
+   if d.founder then r.founder=true end
+   if d.seeded then r.seeded=true end
+   if d.ruleset and not r.ruleset then r.ruleset=d.ruleset end
+   if d.faction and not r.faction then r.faction=d.faction end
+  end
+ end
 end
 function U:IsDispatcher()return false end -- Creator tools are supplied only by the private UberAdmin addon.
 local approved=U.Approved
 function U:Approved(who)
  self:DriverDB();if same(who,self.FOUNDER)then return true end
- local p=self.db.providerPolicies[key(who)];return not (p and (p.state=="BANNED"or p.state=="REMOVED"))and approved(self,who)
+ local p=self.db.providerPolicies[key(who)];if p and (p.state=="BANNED"or p.state=="REMOVED")then return false end
+ return approved(self,who)or self:SeededDriver(who)~=nil
+end
+local driverClass=U.DriverClass
+function U:DriverClass(who)
+ self:DriverDB()
+ local r=self.db.drivers[key(who)]
+ if r and (r.class=="MAGE"or r.class=="WARLOCK")then return r.class end
+ local s=self:SeededDriver(who)
+ if s and s.class then return s.class end
+ return driverClass and driverClass(self,who)or "WARLOCK"
 end
 function U:ProviderPolicy(who)
  self:DriverDB();return self.db.providerPolicies[key(who)]or {hours="Hours not published — request a time; confirmation required"}

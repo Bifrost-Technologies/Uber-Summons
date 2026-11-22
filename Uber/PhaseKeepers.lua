@@ -97,9 +97,12 @@ end
 local function button(f,text,y,fn)local b=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');b:SetSize(520,28);b:SetPoint('TOPLEFT',20,y);b:SetText(text);b:SetScript('OnClick',fn);return b end
 function P:Show()
  if not self.frame then
-  local f=CreateFrame('Frame','UberPhaseKeepers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(565,530);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.025,.055,.12,.98)
-  local t=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');t:SetPoint('TOPLEFT',20,-20);t:SetText('UBER / PHASE KEEPERS');t:SetTextColor(.2,.8,1)
+  local f=CreateFrame('Frame','UberPhaseKeepers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(565,530);f:SetPoint('CENTER');f:SetFrameStrata('FULLSCREEN_DIALOG');f:SetToplevel(true);f:SetClampedToScreen(true);f:EnableMouse(true)
+  f:SetMovable(true);f:RegisterForDrag('LeftButton');f:SetScript('OnDragStart',f.StartMoving);f:SetScript('OnDragStop',f.StopMovingOrSizing)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.02,.045,.10,1);f:SetBackdropBorderColor(.16,.36,.65)
+  local t=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');t:SetPoint('TOPLEFT',20,-20);t:SetText('UBER / PHASE KEEPERS');t:SetTextColor(.30,.65,1)
+  local close=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');close:SetSize(30,28);close:SetPoint('TOPRIGHT',-14,-14);close:SetText('X');close:SetScript('OnClick',function()f:Hide()end)
+  table.insert(UISpecialFrames,'UberPhaseKeepers')
   self.hostButton=button(f,'Host OFF — click to host',-55,function()
    if not self.hosting and(not safe()or not alone())then U:Notice('Host while solo, outdoors, on the ground and out of combat.');return end
    self.hosting=not self.hosting;self.label=self.labelEdit:GetText();if not clean(self.label,40)then self.label='Unverified'end
@@ -107,6 +110,7 @@ function P:Show()
    if not self.hosting then StaticPopup_Hide('UBER_PHASE_KEEPER');self.pending=nil end
   end)
   self.labelEdit=CreateFrame('EditBox',nil,f,'InputBoxTemplate');self.labelEdit:SetSize(520,25);self.labelEdit:SetPoint('TOPLEFT',20,-100);self.labelEdit:SetAutoFocus(false);self.labelEdit:SetMaxLetters(40);self.labelEdit:SetText('Unverified layer — manual label')
+  self.labelEdit:SetScript('OnEscapePressed',function(s)s:ClearFocus()end);self.labelEdit:SetScript('OnEnterPressed',function(s)s:ClearFocus()end)
   button(f,'Refresh known keepers / ask guild',-140,function()
    if now()-(self.discoverAt or 0)<15 then return end;self.discoverAt=now()
    if IsInGuild()then U:Send({'KEEPQ1'},nil,'GUILD')end
@@ -121,7 +125,7 @@ function P:Show()
    for i,row in ipairs(self.rows)do local who=list[i];row.who=who;local r=who and self.hosts[who];row:SetText(r and (who..' · '..r.zone..' · '..r.label..(r.remaining and (' · '..r.remaining..'/6 invites left')or '')..(r.state=='COOLDOWN'and (' · '..math.max(0,r.retry-now())..'s cooldown')or r.state=='BUSY'and ' · Paused'or ''))or 'No known keeper');row:SetEnabled(eligible(r)==true)end
   end)
  end
- self.frame:Show()
+ self.frame:Show();self.frame:Raise()
 end
 local tick=U.Tick
 function U:Tick()

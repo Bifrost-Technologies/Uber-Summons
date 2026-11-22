@@ -37,8 +37,8 @@ function U:Refresh(...)
  local view=self.views and self.views['Driver desk']
  if view and not self.rememberServiceCheck then
   local box=CreateFrame('CheckButton',nil,view,'UICheckButtonTemplate');self.rememberServiceCheck=box
-  box:SetSize(25,25);box:SetPoint('TOPLEFT',305,-62)
-  local label=box:CreateFontString(nil,'OVERLAY','GameFontHighlightSmall');label:SetPoint('LEFT',box,'RIGHT',3,0);label:SetText('Remember service ON/OFF after restart');label:SetTextColor(.2,.8,1)
+  box:SetSize(25,25);box:SetPoint('TOPLEFT',555,-64)
+  local label=box:CreateFontString(nil,'OVERLAY','GameFontHighlightSmall');label:SetPoint('LEFT',box,'RIGHT',4,0);label:SetWidth(300);label:SetJustifyH('LEFT');label:SetText('Remember service ON/OFF after restart');label:SetTextColor(.30,.65,1)
   box:SetScript('OnClick',function(b)local cfg=self:ServicePreferences();cfg.remember=b:GetChecked()==true;cfg.open=self.online==true;self:Notice(cfg.remember and 'Current service choice will be restored after login.'or 'Approved drivers open service at login by default.');end)
  end
  if self.rememberServiceCheck then self.rememberServiceCheck:SetChecked(self:ServicePreferences().remember==true)end

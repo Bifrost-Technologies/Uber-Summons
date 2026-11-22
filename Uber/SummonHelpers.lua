@@ -32,11 +32,15 @@ function H:Send()
 end
 function H:Show()
  if not self.frame then
-  local f=CreateFrame('Frame','SummonClickHelpers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(550,300);f:SetPoint('CENTER');f:SetClampedToScreen(true);f:EnableMouse(true);f:SetFrameStrata('DIALOG')
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8'});f:SetBackdropColor(.025,.055,.12,.98)
-  local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOPLEFT',20,-20);title:SetText('SUMMON CLICK HELPERS');title:SetTextColor(.2,.8,1)
+  local f=CreateFrame('Frame','SummonClickHelpers',UIParent,'BackdropTemplate');self.frame=f;f:SetSize(550,300);f:SetPoint('CENTER');f:SetClampedToScreen(true);f:EnableMouse(true);f:SetFrameStrata('FULLSCREEN_DIALOG');f:SetToplevel(true)
+  f:SetMovable(true);f:RegisterForDrag('LeftButton');f:SetScript('OnDragStart',f.StartMoving);f:SetScript('OnDragStop',f.StopMovingOrSizing)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.02,.045,.10,1);f:SetBackdropBorderColor(.16,.36,.65)
+  local title=f:CreateFontString(nil,'OVERLAY','GameFontNormalLarge');title:SetPoint('TOPLEFT',20,-20);title:SetText('SUMMON CLICK HELPERS');title:SetTextColor(.30,.65,1)
+  local close=CreateFrame('Button',nil,f,'UIPanelButtonTemplate');close:SetSize(30,28);close:SetPoint('TOPRIGHT',-14,-14);close:SetText('X');close:SetScript('OnClick',function()H:Stop();f:Hide()end)
+  table.insert(UISpecialFrames,'SummonClickHelpers')
   local scope=button(f,'Scope: '..db().scope,-55,function()H:Stop();db().scope=db().scope=='TOWN'and 'REGION'or 'TOWN';H.scope:SetText('Scope: '..db().scope)end);self.scope=scope
   self.edit=CreateFrame('EditBox',nil,f,'InputBoxTemplate');self.edit:SetSize(500,28);self.edit:SetPoint('TOPLEFT',20,-100);self.edit:SetAutoFocus(false);self.edit:SetMaxLetters(255);self.edit:SetText(db().text)
+  self.edit:SetScript('OnEscapePressed',function(s)s:ClearFocus()end);self.edit:SetScript('OnEnterPressed',function(s)s:ClearFocus()end)
   button(f,'1. Prepare native WHO search',-145,function()
    H:Stop();local place=location();if not place or place==''or place:find('[%c"|]')then notify('Location unavailable. Exact town needs a named subzone.');return end
    H.resultsReady=false;H.queryVerified=false;H.searchedPlace,H.searchedScope=place,db().scope
@@ -50,7 +54,7 @@ function H:Show()
   button(f,'STOP / Close',-225,function()H:Stop();f:Hide()end)
   f:SetScript('OnHide',function()H:Stop()end)
  end
- self.frame:Show()
+ self.frame:Show();self.frame:Raise()
 end
 SLASH_SUMMONCLICKHELPERS1='/summonhelpers';SlashCmdList.SUMMONCLICKHELPERS=function()H:Show()end
 _G.SummonClickHelpers=H

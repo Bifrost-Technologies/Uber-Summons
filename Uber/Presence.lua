@@ -98,7 +98,8 @@ function U:Receive(text,sender,channel)
  local p={};for v in (text.."|"):gmatch("(.-)|")do p[#p+1]=v end
  local _,id=self:Network()
  if p[1]=="HELLO3"then
-  if channel~="WHISPER"or #p~=2 or p[2]~=id or not self:Approved(GetUnitName("player",true))then return end
+  local realmAllowed=self.ScopeRealmAllowed and self:ScopeRealmAllowed(sender,p[2])or p[2]==id
+  if channel~="WHISPER"or #p~=2 or not realmAllowed or not self:Approved(GetUnitName("player",true))then return end
   if now()-(self.last[sender.."hello"]or 0)<10 then return end
   self.last[sender.."hello"]=now();local total=0;for _ in pairs(self.subscribers)do total=total+1 end
   if self.subscribers[sender]or total<100 then self.subscribers[sender]=now()end

@@ -47,3 +47,6 @@ The directory defaults to My realm + faction; its button toggles All known netwo
 
 Regression coverage: uber-protocol exercises 42 faction/realm/replay/channel/flood cases; uber-public-private loads the final protocol and models the production four-packet/second dispatch cadence for paged-roster tests. The tracking panel tolerates missing ETA in incomplete cached orders. Full affected suites and native multiplayer acceptance are recorded separately; offline passes do not establish gameplay delivery.
 
+## Ruleset/faction directory, filter dropdown & UI fixes
+Added `U.SEEDED_DRIVERS` in `Uber/Administration.lua` (`Bîfrost Titan` and `Krazyito Isamage`, `MAGE`, `Normal`, `Horde`), added WoW Forever `Normal`/`PvP`/`RP`/`RPPvP` ruleset detection and Ruleset + Faction matching/display in `Uber/RealmScope.lua`, `Uber/Roster.lua`, `Uber/Presence.lua`, and `Uber/PeerDiscovery.lua`, replaced the `Drivers` filter toggle with a checkmark dropdown (`U:DriverFilters`, `U:SetDriverFilter`, `UberFilterMenu`) defaulting to `Available to me` + `Online only` with Warlock/Mage class toggles and online-first sorting, fixed popup window strata/dragging in `PhaseKeepers.lua`/`SummonHelpers.lua`/`NetworkStats.lua`/`Notifications.lua`/`ServiceUI.lua`/`Roster.lua`, and moved `rememberServiceCheck` clear of ETA controls in `Uber/ServicePreferences.lua`.
+
