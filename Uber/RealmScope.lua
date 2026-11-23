@@ -69,13 +69,6 @@ function U:DriverScope(who)
   if not self:NormalizeRuleset(s.ruleset)then s.ruleset=self:NormalizeRuleset(s.realm)or ''end
   return s
  end
- local r=self.db.drivers and self.db.drivers[self.NameKey(who)]or(self.SeededDriver and self:SeededDriver(who))
- if type(r)=='table'then
-  local rs=self:NormalizeRuleset(r.ruleset)or self:NormalizeRuleset(r.realm)
-  if rs and faction(r.faction)then
-   return {realm=valid(r.realm,80)and r.realm or '',ruleset=rs,faction=r.faction,realmID=0,region=0,at=GetServerTime(),seeded=true,version=2}
-  end
- end
 end
 function U:FormatDriverScope(s)
  if type(s)~='table'then return 'Ruleset/faction unknown'end

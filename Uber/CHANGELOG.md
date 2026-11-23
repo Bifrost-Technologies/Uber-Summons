@@ -2,7 +2,6 @@
 
 - Detect WoW Forever rulesets (`Normal`, `PvP`, `RP`, `RPPvP`) and display Ruleset / Faction on each driver card in the `Drivers` tab; allow cross-shard matching within the same ruleset and faction.
 - Replace the `Drivers` scope toggle button with a checkmark filter dropdown (`Available to me`, `Online only` — both enabled by default — plus `Warlocks (Summons)` and `Mages (Portals)`), with online-first sorting and an empty-filter hint.
-- Seed `Krazyito Isamage` (`MAGE`, `Normal` / `Horde`) via `U.SEEDED_DRIVERS`.
 - Fix popup sub-windows (`Phase Keepers`, `Summon Click Helpers`, `Network & Open Sessions`, `Mailbox`, `Welcome`, `Billing`, and Star Rating) merging visually behind/into the main panel by moving them to `FULLSCREEN_DIALOG`, enabling `SetToplevel(true)` + `Raise()`, adding blue borders, and enabling left-click dragging.
 - Reposition the `Remember service ON/OFF after restart` checkbox in `Driver desk` clear of the `ETA minutes` input.
 

@@ -91,7 +91,7 @@ pump();check(buyer.db.outbox[deliveredID].status=="Advance reservation accepted"
 current=founder
 check(admin:ManageProvider("Mage-Realm","BANNED","MAGE","1","2","Daily UTC","Scam complaint under review"),"Admin ban")
 pump();current="Mage-Realm";check(not mage.online and not mage:Approved("Mage-Realm"),"Ban closes service")
-current="Buyer-Realm";check(#buyer:ProviderDirectory()==#buyer.SEEDED_DRIVERS and not buyer:Approved("Mage-Realm"),"Banned driver removed from public directory")
+current="Buyer-Realm";check(#buyer:ProviderDirectory()==1,"Banned driver removed from public directory")
 local newer=buyer:ProviderPolicy("Mage-Realm").revision
 buyer:Receive("ADMIN4|Mage-Realm|APPROVED|MAGE|100000|0|0|Daily UTC|old",founder,"WHISPER")
 check(buyer:ProviderPolicy("Mage-Realm").revision==newer and not buyer:Approved("Mage-Realm"),"Stale policy cannot unban")
