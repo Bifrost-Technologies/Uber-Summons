@@ -177,8 +177,9 @@ local function button(f,text,x,y,w,fn)local b=CreateFrame('Button',nil,f,'UIPane
 function U:ShowNetwork()
  if not self.db then return end;self:StatsDB()
  if not self.networkFrame then
-  local f=CreateFrame('Frame','UberNetworkPanel',UIParent,'BackdropTemplate');self.networkFrame=f;f:SetSize(920,680);f:SetPoint('CENTER');f:SetFrameStrata('DIALOG');f:SetClampedToScreen(true);f:EnableMouse(true)
-  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.015,.035,.085,1)
+  local f=CreateFrame('Frame','UberNetworkPanel',UIParent,'BackdropTemplate');self.networkFrame=f;f:SetSize(920,680);f:SetPoint('CENTER');f:SetFrameStrata('FULLSCREEN_DIALOG');f:SetToplevel(true);f:SetClampedToScreen(true);f:EnableMouse(true)
+  f:SetMovable(true);f:RegisterForDrag('LeftButton');f:SetScript('OnDragStart',f.StartMoving);f:SetScript('OnDragStop',f.StopMovingOrSizing)
+  f:SetBackdrop({bgFile='Interface\\Buttons\\WHITE8X8',edgeFile='Interface\\Tooltips\\UI-Tooltip-Border',edgeSize=16});f:SetBackdropColor(.015,.035,.085,1);f:SetBackdropBorderColor(.16,.36,.65)
   label(f,'UBER / SUMMONING NETWORK & OPEN SESSIONS',24,-22,820,32)
   button(f,'X',860,-18,34,function()f:Hide()end);table.insert(UISpecialFrames,'UberNetworkPanel')
   self.networkSummary=label(f,'',24,-66,870,40)
@@ -190,7 +191,7 @@ function U:ShowNetwork()
   button(f,'Refresh network',460,-556,200,function()self:RefreshProvider();self:ReportNetwork()end)
   label(f,'Counts reflect fresh observations (120s), not every player on the realm. Public users are a conservative observed count, never a sum of overlapping provider reports. Joining a session does not mean free service or guaranteed arrival.',24,-605,870,56)
  end
- self.publicStatsCheck:SetChecked(self.db.networkPrivacy.publicStats==true);self.networkFrame:Show();self:ReportNetwork();self:Refresh()
+ self.publicStatsCheck:SetChecked(self.db.networkPrivacy.publicStats==true);self.networkFrame:Show();self.networkFrame:Raise();self:ReportNetwork();self:Refresh()
 end
 local show=U.Show
 function U:Show()

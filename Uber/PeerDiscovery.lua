@@ -57,8 +57,9 @@ function U:Receive(text,sender,channel)
   local name=self.NameKey(sender);if self.peerHeardAt[name]or count<200 then self.peerHeardAt[name]=now()end
  end
  if type(text)=='string'and text:sub(1,10)=='DISCOVER5|'then
-  local _,id=self:Network()
-  if text~='DISCOVER5|'..id or (channel~='GUILD'and channel~='PARTY'and channel~='RAID')or self.NameKey(sender)==self.NameKey(GetUnitName('player',true))then return end
+  local _,id=self:Network();local incoming=text:sub(11)
+  local realmAllowed=self.ScopeRealmAllowed and self:ScopeRealmAllowed(sender,incoming)or incoming==id
+  if not realmAllowed or (channel~='GUILD'and channel~='PARTY'and channel~='RAID')or self.NameKey(sender)==self.NameKey(GetUnitName('player',true))then return end
   if not self:Approved(GetUnitName('player',true))or now()-(self.last[sender..'discover5']or 0)<15 then return end
   self.last[sender..'discover5']=now()
   return receive(self,'HELLO3|'..id,sender,'WHISPER')

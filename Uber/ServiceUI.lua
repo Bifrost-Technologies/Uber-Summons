@@ -9,8 +9,9 @@ end
 function U:ShowBilling()
  if not self.billingFrame then
   local f=CreateFrame("Frame","UberBilling",UIParent,"BackdropTemplate");self.billingFrame=f
-  f:SetPoint("CENTER");f:SetSize(780,650);f:SetFrameStrata("FULLSCREEN_DIALOG");f:SetClampedToScreen(true)
-  f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.025,.055,.12,.99)
+  f:SetPoint("CENTER");f:SetSize(780,650);f:SetFrameStrata("FULLSCREEN_DIALOG");f:SetToplevel(true);f:SetClampedToScreen(true);f:EnableMouse(true)
+  f:SetMovable(true);f:RegisterForDrag("LeftButton");f:SetScript("OnDragStart",f.StartMoving);f:SetScript("OnDragStop",f.StopMovingOrSizing)
+  f:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8",edgeFile="Interface\\Tooltips\\UI-Tooltip-Border",edgeSize=16});f:SetBackdropColor(.025,.055,.12,.99);f:SetBackdropBorderColor(.16,.36,.65)
   label(f,"UBER — PRICES, PRIORITY & PAYMENT NOTICES",24,-22,700,28)
   button(f,"X",728,-14,30,function()f:Hide()end)
   self.priceInfo=label(f,"",24,-62,730,54)
@@ -49,7 +50,7 @@ function U:ShowBilling()
  local p=self:Network();self.baseInput:SetText(("%.4f"):format(p.standard/10000));self.premiumInput:SetText(("%.4f"):format(p.priority/10000))
  local options=self.bookingOptions or {};self.tipInput:SetText(("%.4f"):format((options.tip or 0)/10000));self.priorityOption:SetChecked(options.priority==true)
  self.portalInput:SetText(tostring(options.portals or 1))
- self.billingFrame:Show();self:Refresh()
+ self.billingFrame:Show();self.billingFrame:Raise();self:Refresh()
 end
 local show=U.Show
 function U:Show()

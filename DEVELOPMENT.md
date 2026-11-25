@@ -47,11 +47,12 @@ The directory defaults to My realm + faction; its button toggles All known netwo
 
 Regression coverage: uber-protocol exercises 42 faction/realm/replay/channel/flood cases; uber-public-private loads the final protocol and models the production four-packet/second dispatch cadence for paged-roster tests. The tracking panel tolerates missing ETA in incomplete cached orders. Full affected suites and native multiplayer acceptance are recorded separately; offline passes do not establish gameplay delivery.
 
-
 ## Stable version preparation — 0.5.0
 Both TOCs now declare 0.5.0. Stable publication requires tag v0.5.0: scripts/release.py marks untagged branch uploads alpha, beta-tagged versions beta, and plain version tags release. The workflow likewise marks branch GitHub downloads prerelease. Keep branch artifacts nonstable; renaming a local TOC does not publish or promote any remote file. Uber has no in-game available-version notifier. Addon-manager matching, release channel, compatible game version and moderation can affect available updates; the specific owner's manager issue remains unconfirmed. GitHub/tag/CurseForge publication still requires explicit owner approval. Native gameplay acceptance remains as documented above.
-
 
 ## Stable push releases — 2026-11-22 (supersedes tag-only guidance)
 
 Owner requests stable public releases on default-branch pushes. Plain X.Y.Z TOC versions now produce CurseForge release and GitHub non-prerelease/latest downloads on default-branch pushes as well as matching version tags. Explicit beta/alpha versions retain their prerelease channels. Feature branches only build artifacts; existing publication gates remain. Branch ZIP/tag labels retain commit hashes to distinguish pushes. Increment the TOC version for subsequent user-facing updates. Both client TOCs must match. Local edits do not publish/promote old remote files; no push/upload was performed. Moderation, compatible game-version metadata and addon-manager matching still affect update availability. Stable channel classification is not proof that pending native acceptance checks passed.
+
+## Ruleset/faction directory, filter dropdown & UI fixes
+Added WoW Forever `Normal`/`PvP`/`RP`/`RPPvP` ruleset detection and Ruleset + Faction matching/display in `Uber/RealmScope.lua`, `Uber/Roster.lua`, `Uber/Presence.lua`, and `Uber/PeerDiscovery.lua`, replaced the `Drivers` filter toggle with a checkmark dropdown (`U:DriverFilters`, `U:SetDriverFilter`, `UberFilterMenu`) defaulting to `Available to me` + `Online only` with Warlock/Mage class toggles and online-first sorting, fixed popup window strata/dragging in `PhaseKeepers.lua`/`SummonHelpers.lua`/`NetworkStats.lua`/`Notifications.lua`/`ServiceUI.lua`/`Roster.lua`, and moved `rememberServiceCheck` clear of ETA controls in `Uber/ServicePreferences.lua`.
